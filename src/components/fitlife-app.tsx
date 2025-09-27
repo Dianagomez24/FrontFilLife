@@ -8,8 +8,6 @@ import {
   Apple,
   User,
   LogOut,
-  Menu,
-  X,
 } from "lucide-react";
 import Dashboard from "../pages/dashboard";
 import ExercisePlan from "../pages/planejercicio";
@@ -33,7 +31,6 @@ type ActivePage = "dashboard" | "ejercicio" | "nutricion" | "datos-fisicos";
 
 const FitLifeApp: React.FC<FitLifeAppProps> = ({ user, onLogout }) => {
   const [activePage, setActivePage] = useState<ActivePage>("dashboard");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(user);
 
   const FitLifeIcon = () => (
@@ -72,7 +69,7 @@ const FitLifeApp: React.FC<FitLifeAppProps> = ({ user, onLogout }) => {
       description: "Alimentación saludable",
     },
     {
-      id: "datos-fisicos" as ActivePage, // 👉 sigue viéndose igual
+      id: "datos-fisicos" as ActivePage,
       label: "Datos Físicos",
       icon: User,
       description: "Cuestionario de salud",
@@ -96,7 +93,7 @@ const FitLifeApp: React.FC<FitLifeAppProps> = ({ user, onLogout }) => {
         return <ExercisePlan user={currentUser} onStartQuestionnaire={() => setActivePage("datos-fisicos")} />;
       case "nutricion":
         return <NutritionPlan user={currentUser} />;
-      case "datos-fisicos": // 👉 ahora renderiza el cuestionario
+      case "datos-fisicos":
         return (
           <HealthQuestionnaire
             onComplete={handleQuestionnaireComplete}
@@ -127,101 +124,72 @@ const FitLifeApp: React.FC<FitLifeAppProps> = ({ user, onLogout }) => {
   };
 
   return (
-    <div className="layout">
+    <div className="layout flex min-h-screen">
       {/* Sidebar */}
-      <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
+      <aside className="sidebar fixed flex flex-col justify-between w-64 bg-white">
         {/* Header del sidebar */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-100">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-[#959581] to-[#aeb99d] rounded-xl flex items-center justify-center">
-              <FitLifeIcon />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-[#2d3319]">FitLife</h1>
-              <p className="text-[#bcc591] text-sm">Tu transformación</p>
+        <div>
+          <div className="flex items-center justify-between p-6 border-b border-gray-100">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-gradient-to-br from-[#959581] to-[#aeb99d] rounded-xl flex items-center justify-center">
+                <FitLifeIcon />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-[#2d3319]">FitLife</h1>
+                <p className="text-[#bcc591] text-sm">Tu transformación</p>
+              </div>
             </div>
           </div>
-          <button
-            onClick={() => setSidebarOpen(false)}
-            className="lg:hidden text-gray-400 hover:text-gray-600 p-2"
-          >
-            <X size={20} />
-          </button>
+
+          {/* Navegación */}
+          <nav className="nav p-4">
+            <div className="space-y-1">
+              {navigationItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = activePage === item.id;
+
+                return (
+                  <a
+                    key={item.id}
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setActivePage(item.id);
+                    }}
+                    className={`nav-item ${isActive ? "active" : ""}`}
+                  >
+                    <span className="icon">
+                      <Icon size={20} />
+                    </span>
+                    <span>
+                      <div className="font-semibold">{item.label}</div>
+                      <div className={`text-sm ${isActive ? "text-white/80" : "text-[#bcc591]"}`}>
+                        {item.description}
+                      </div>
+                    </span>
+                  </a>
+                );
+              })}
+            </div>
+          </nav>
         </div>
-
-        {/* Información del usuario */}
-        <div className="user-info">
-          <div className="flex items-center gap-3">
-            <div className="avatar">
-              <User size={20} />
-            </div>
-            <div>
-              <h3 className="text-[#2d3319] font-semibold">
-                {currentUser.nombre} {currentUser.apellidos}
-              </h3>
-              <p className="text-[#bcc591] text-sm">{currentUser.email}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Navegación */}
-        <nav className="nav">
-          <div className="space-y-1">
-            {navigationItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = activePage === item.id;
-
-              return (
-                <a
-                  key={item.id}
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setActivePage(item.id);
-                    setSidebarOpen(false);
-                  }}
-                  className={`nav-item ${isActive ? "active" : ""}`}
-                >
-                  <span className="icon">
-                    <Icon size={20} />
-                  </span>
-                  <span>
-                    <div className="font-semibold">{item.label}</div>
-                    <div className={`text-sm ${isActive ? "text-white/80" : "text-[#bcc591]"}`}>
-                      {item.description}
-                    </div>
-                  </span>
-                </a>
-              );
-            })}
-          </div>
-        </nav>
 
         {/* Botón de logout */}
         <div className="p-4 border-t border-gray-100">
           <button
             onClick={onLogout}
-            className="w-full flex items-center gap-3 p-3 text-[#bcc591] hover:text-[#2d3319] hover:bg-gray-50 rounded-xl transition-all duration-200"
+            className="w-full flex items-center gap-3 p-4 text-[#2d3319] bg-[#f5f5f0] rounded-2xl shadow-sm hover:bg-gradient-to-r hover:from-[#aeb99d] hover:to-[#c4c9b5] hover:shadow-md hover:scale-102 hover:opacity-90 transition-all duration-200"
           >
-            <LogOut size={20} />
-            <span>Cerrar Sesión</span>
+            <LogOut size={24} />
+            <span className="font-semibold text-base">Cerrar Sesión</span>
           </button>
         </div>
       </aside>
 
       {/* Contenido principal */}
-      <main
-        className="main-content"
-        onClick={() => sidebarOpen && setSidebarOpen(false)}
-      >
+      <main className="main-content ml-64 flex-1">
         <header className="header">
           <div className="flex items-center gap-4">
-            <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="lg:hidden p-2 text-[#2d3319] hover:bg-gray-50 rounded-lg"
-            >
-              <Menu size={24} />
-            </button>
             <div>
               <h2 className="text-2xl font-bold text-[#2d3319] capitalize">{getPageTitle()}</h2>
               <p className="text-[#bcc591] text-sm">{getPageDescription()}</p>
@@ -235,7 +203,7 @@ const FitLifeApp: React.FC<FitLifeAppProps> = ({ user, onLogout }) => {
               <div className="text-sm font-semibold text-[#2d3319]">
                 {currentUser.nombre} {currentUser.apellidos}
               </div>
-              <div className="text-xs text-[#bcc591]">Miembro activo</div>
+              <div className="text-xs text-[#bcc591]">{currentUser.email}</div>
             </div>
           </div>
         </header>
