@@ -1,0 +1,366 @@
+/* Contenedor principal */
+.plan-container {
+  width: 100%;
+  max-width: 80rem; /* Ancho amplio para escritorio */
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 2rem; /* Padding simétrico */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh; /* Centra verticalmente */
+  justify-content: center;
+}
+
+
+
+.plan-header .icon-container {
+  width: 6rem;
+  height: 6rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem; /* Centrado y espaciado */
+}
+
+.plan-header h1 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 1rem;
+}
+
+.plan-header p {
+  font-size: 1.125rem;
+  color: rgba(255, 255, 255, 0.9);
+  max-width: 48rem;
+  margin: 0 auto 2rem;
+}
+
+.plan-header button {
+  background-color: #fff;
+  color: #2d3319;
+  padding: 1rem 2rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+  margin: 0 auto;
+  transition: all 0.2s ease;
+}
+
+.plan-header button:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  transform: scale(1.05);
+}
+
+/* Lista de planes */
+.bg-white {
+  background-color: #fff;
+}
+
+.shadow-sm {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.border {
+  border-width: 1px;
+}
+
+.border-gray-100 {
+  border-color: #f3f4f6;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+}
+
+.gap-3 {
+  gap: 0.75rem;
+}
+
+.py-12 {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+.w-16 {
+  width: 4rem;
+}
+
+.h-16 {
+  height: 4rem;
+}
+
+.bg-gray-100 {
+  background-color: #f3f4f6;
+}
+
+.text-\[\#bcc591\] {
+  color: #bcc591;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+.grid {
+  display: grid;
+}
+
+.grid-cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.gap-6 {
+  gap: 1.5rem;
+}
+
+.grid-container {
+  display: flex;
+  justify-content: center;
+}
+
+/* Tarjeta de plan */
+.border-2 {
+  border-width: 2px;
+}
+
+.p-6 {
+  padding: 1.5rem;
+}
+
+.border-\[\#aeb99d\] {
+  border-color: #aeb99d;
+}
+
+.bg-\[\#aeb99d\]\/5 {
+  background-color: rgba(174, 185, 157, 0.05);
+}
+
+.border-gray-200 {
+  border-color: #e5e7eb;
+}
+
+.bg-gray-50 {
+  background-color: #f9fafb;
+}
+
+.items-start {
+  align-items: flex-start;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.mb-1 {
+  margin-bottom: 0.25rem;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.px-3 {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+.py-1 {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.text-xs {
+  font-size: 0.75rem;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.bg-green-100 {
+  background-color: #d1fae5;
+}
+
+.text-green-800 {
+  color: #047857;
+}
+
+.p-2 {
+  padding: 0.5rem;
+}
+
+.rounded-lg {
+  border-radius: 0.5rem;
+}
+
+.transition-colors {
+  transition-property: color, background-color, border-color;
+  transition-duration: 200ms;
+}
+
+.text-green-600 {
+  color: #059669;
+}
+
+.text-gray-400 {
+  color: #9ca3af;
+}
+
+.bg-red-100 {
+  background-color: #fee2e2;
+}
+
+.text-red-600 {
+  color: #dc2626;
+}
+
+.hover\:bg-red-200:hover {
+  background-color: #fecaca;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.space-y-3 > * + * {
+  margin-top: 0.75rem;
+}
+
+.pt-4 {
+  padding-top: 1rem;
+}
+
+.border-t {
+  border-top-width: 1px;
+}
+
+/* Formulario de plan */
+.max-w-4xl {
+  max-width: 64rem;
+}
+
+.space-y-6 > * + * {
+  margin-top: 1.5rem;
+}
+
+.focus\:outline-none:focus {
+  outline: none;
+}
+
+.focus\:border-\[\#aeb99d\]:focus {
+  border-color: #aeb99d;
+}
+
+.focus\:ring-2:focus {
+  --tw-ring-offset-width: 2px;
+  box-shadow: 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-color);
+}
+
+.focus\:ring-\[\#aeb99d\]\/20:focus {
+  --tw-ring-color: rgba(174, 185, 157, 0.2);
+}
+
+.w-full {
+  width: 100%;
+}
+
+.p-4 {
+  padding: 1rem;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.rows-3 {
+  rows: 3;
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
+.bg-\[\#aeb99d\] {
+  background-color: #aeb99d;
+}
+
+.hover\:bg-\[\#c4c9b5\]:hover {
+  background-color: #c4c9b5;
+}
+
+.mt-8 {
+  margin-top: 2rem;
+}
+
+.pt-6 {
+  padding-top: 1.5rem;
+}
+
+.px-6 {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.py-3 {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+.bg-gray-200 {
+  background-color: #e5e7eb;
+}
+
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
+
+/* Formulario de comida */
+.p-3 {
+  padding: 0.75rem;
+}
+
+.text-red-500 {
+  color: #ef4444;
+}
+
+.hover\:text-red-700:hover {
+  color: #b91c1c;
+}
+
+.space-y-4 > * + * {
+  margin-top: 1rem;
+}
+
+/* Estilos para cards */
+.plan-card {
+  border: 1px solid rgba(196, 201, 181, 0.2);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  background-color: #fff;
+  text-align: center;
+  transition: all 0.2s ease;
+  margin: 0 auto;
+  max-width: 20rem;
+}
+
+.plan-card:hover {
+  border-color: #959581;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.plan-card.selected {
+  background-color: rgba(149, 149, 129, 0.1);
+  border-color: #959581;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}

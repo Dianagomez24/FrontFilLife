@@ -1,0 +1,349 @@
+/* General spacing and layout */
+.space-y-8 > * + * {
+  margin-top: 2rem;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.sm\:flex-row {
+  flex-direction: row;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.items-start {
+  align-items: flex-start;
+}
+
+.sm\:items-center {
+  align-items: center;
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
+/* Typography */
+.text-3xl {
+  font-size: 1.875rem;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.text-\[\#2d3319\] {
+  color: #2d3319;
+}
+
+.text-\[\#bcc591\] {
+  color: #bcc591;
+}
+
+.text-white {
+  color: #fff;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+/* Input Field Styles for Step 1 (Información Básica) and Shared with Step 3 */
+input[type="number"],
+input[type="text"],
+select,
+textarea {
+  width: 100%;
+  padding: 0.875rem 1.25rem; /* Slightly smaller padding for a sleeker look */
+  border: 1px solid #e5e5e5; /* Softer gray border */
+  border-radius: 0.75rem; /* Consistent rounded corners */
+  background-color: #fafafa; /* Light background for inputs */
+  font-size: 0.875rem; /* Smaller, cleaner font size */
+  color: #2d3319; /* Text color matching the theme */
+  transition: all 0.2s ease-in-out; /* Smooth transitions for hover/focus */
+  appearance: none; /* Remove default browser styling */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+input[type="number"]:focus,
+input[type="text"]:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #959581; /* Theme color for focus */
+  box-shadow: 0 0 0 3px rgba(149, 149, 129, 0.2); /* Subtle ring effect */
+  background-color: #fff; /* White background on focus */
+}
+
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%232d3319'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E"); /* Custom dropdown arrow */
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1.25rem;
+}
+
+textarea {
+  resize: vertical; /* Allow vertical resizing only */
+  min-height: 4rem; /* Minimum height for textareas */
+}
+
+/* Placeholder Styling */
+input[type="number"]::placeholder,
+input[type="text"]::placeholder,
+textarea::placeholder {
+  color: #bcc591; /* Placeholder matches theme */
+  opacity: 0.7;
+}
+
+/* Checkbox Styles for Step 3 (Información de Salud) */
+input[type="checkbox"] {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid #e5e5e5; /* Thicker border for visibility */
+  border-radius: 0.25rem; /* Slightly rounded checkboxes */
+  background-color: #fafafa;
+  transition: all 0.2s ease-in-out;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+input[type="checkbox"]:checked {
+  background-color: #959581; /* Theme color when checked */
+  border-color: #959581;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='white'%3E%3Cpath fill-rule='evenodd' d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z' clip-rule='evenodd' /%3E%3C/svg%3E"); /* Custom checkmark */
+  background-size: 1rem;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+input[type="checkbox"]:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(149, 149, 129, 0.2); /* Focus ring */
+}
+
+/* Label Styling (Shared for all labels, including checkboxes) */
+label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #2d3319;
+  margin-bottom: 0.5rem;
+}
+
+/* Checkbox Label (Flex for alignment) */
+label.flex.items-center {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem; /* Space between checkbox and text */
+  cursor: pointer;
+}
+
+label.flex.items-center span {
+  font-size: 0.875rem;
+  color: #2d3319;
+}
+
+/* Grid Layout for Inputs and Checkboxes */
+.grid {
+  display: grid;
+}
+
+.grid-cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.md\:grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.gap-6 {
+  gap: 1.5rem;
+}
+
+.gap-3 {
+  gap: 0.75rem;
+}
+
+/* Button Styles */
+.px-6 {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.py-3 {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+.rounded-xl {
+  border-radius: 0.75rem;
+}
+
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+.hover\:shadow-lg:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+.hover\:scale-105:hover {
+  transform: scale(1.05);
+}
+
+/* Progress Bar and Card */
+.bg-gradient-to-r {
+  background-image: linear-gradient(to right, var(--tw-gradient-stops));
+}
+
+.from-\[\#959581\] {
+  --tw-gradient-from: #959581;
+  --tw-gradient-to: rgba(149, 149, 129, 0);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.to-\[\#aeb99d\] {
+  --tw-gradient-to: #aeb99d;
+}
+
+.bg-white {
+  background-color: #fff;
+}
+
+.p-6 {
+  padding: 1.5rem;
+}
+
+.shadow-sm {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.border {
+  border-width: 1px;
+}
+
+.border-gray-100 {
+  border-color: #f0f0f0;
+}
+
+.rounded-2xl {
+  border-radius: 1rem;
+}
+
+/* Additional Utility Classes */
+.mb-6 {
+  margin-bottom: 1.5rem;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.mb-3 {
+  margin-bottom: 0.75rem;
+}
+
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.w-14 {
+  width: 3.5rem;
+}
+
+.h-14 {
+  height: 3.5rem;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.text-green-600 {
+  color: #16a34a;
+}
+
+.text-red-600 {
+  color: #dc2626;
+}
+
+.mt-6 {
+  margin-top: 1.5rem;
+}
+
+.py-12 {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+}
+
+.leading-none {
+  line-height: 1;
+}
+
+.bg-\[\#f5f5f0\] {
+  background-color: #f5f5f0;
+}
+
+.hover\:shadow-md:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.transition-shadow {
+  transition-property: box-shadow;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+/* Warning Box (Already styled, but ensuring consistency) */
+.bg-amber-50 {
+  background-color: #fffbeb;
+}
+
+.border-amber-200 {
+  border-color: #fde68a;
+}
+
+.text-amber-800 {
+  color: #78350f;
+}
+
+.text-amber-600 {
+  color: #d97706;
+}
