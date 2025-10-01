@@ -23,7 +23,6 @@ const Login: React.FC<LoginProps> = ({ onSwitchToRegister, onLoginSuccess }) => 
   const [isLocked, setIsLocked] = useState(false)
   const [lockTime, setLockTime] = useState(0)
 
-  // Efecto para el bloqueo temporal
   useEffect(() => {
     if (isLocked && lockTime > 0) {
       const timer = setTimeout(() => {
@@ -36,7 +35,6 @@ const Login: React.FC<LoginProps> = ({ onSwitchToRegister, onLoginSuccess }) => 
     }
   }, [isLocked, lockTime])
 
-  // Limpiar errores cuando el usuario empiece a escribir
   useEffect(() => {
     if (error) {
       setError("")

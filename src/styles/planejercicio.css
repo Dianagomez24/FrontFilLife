@@ -157,10 +157,9 @@
   border-color: rgba(196, 201, 181, 0.2);
 }
 
-/* Nuevo contenedor para centrar el contenido en web */
 .plan-container {
   width: 100%;
-  max-width: 64rem; /* Ajustado para mayor espacio si es necesario */
+  max-width: 64rem; 
   margin-left: auto;
   margin-right: auto;
   padding: 0 1.5rem;
@@ -168,12 +167,11 @@
 
 @media (min-width: 1024px) {
   .plan-container {
-    padding-left: calc(20rem + 1.5rem); /* Compensar el sidebar (20rem) + padding */
+    padding-left: calc(20rem + 1.5rem); 
     padding-right: 1.5rem;
   }
 }
 
-/* Estilos para cards o secciones del plan (si aplica) */
 .plan-card {
   border: 1px solid rgba(196, 201, 181, 0.2);
   border-radius: 0.75rem;
@@ -189,7 +187,7 @@
 }
 
 .plan-card.selected {
-  background-color: rgba(149, 149, 129, 0.1); /* Color suave para la opción seleccionada */
+  background-color: rgba(149, 149, 129, 0.1); 
   border-color: #959581;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }

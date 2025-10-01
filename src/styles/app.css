@@ -141,7 +141,6 @@
   color: inherit;
 }
 
-/* Estilos para la sección de usuario */
 .user-info {
   padding: 1rem 1.5rem;
   border-bottom: 1px solid #f0f0f0;
@@ -174,7 +173,6 @@
   }
 }
 
-/* Clases utilitarias adicionales */
 .text-xl {
   font-size: 1.25rem;
   font-weight: 700;

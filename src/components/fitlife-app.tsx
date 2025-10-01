@@ -6,7 +6,7 @@ import ExercisePlan from "../pages/planejercicio";
 import HealthQuestionnaire from "../components/cuestionariosalud";
 import NutritionPlan from "../pages/plannutricional";
 import NotificationsPage from "../pages/notifications"; 
-import { NotificationIcon } from "./NotificationIcon"; // Cambiado aquí
+import { NotificationIcon } from "./NotificationIcon";
 
 interface FitLifeAppProps {
   user: {
@@ -195,7 +195,6 @@ const FitLifeApp: React.FC<FitLifeAppProps> = ({ user, onLogout }) => {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            {/* CAMBIO PRINCIPAL: Agregada la prop onNavigate */}
             <NotificationIcon onNavigate={() => setActivePage("notificaciones")} />
             
             <div className="w-10 h-10 bg-gradient-to-br from-[#959581] to-[#aeb99d] rounded-full flex items-center justify-center">

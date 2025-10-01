@@ -1,6 +1,5 @@
 
 :root {
-  /* Paleta de colores principal */
   --primary-50: #f8f8f6;
   --primary-100: #f0f0f0;
   --primary-200: #e5e5e5;
@@ -11,27 +10,23 @@
   --primary-700: #2d3319;
   --primary-800: #1a1d0f;
   
-  /* Colores semánticos */
   --success: #16a34a;
   --warning: #d97706;
   --error: #dc2626;
   --info: #2563eb;
   
-  /* Espaciados consistentes */
   --space-xs: 0.5rem;
   --space-sm: 1rem;
   --space-md: 1.5rem;
   --space-lg: 2rem;
   --space-xl: 3rem;
   
-  /* Bordes */
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
   --radius-lg: 1rem;
   --radius-xl: 1.5rem;
 }
 
-/* Reset mejorado */
 * {
   margin: 0;
   padding: 0;
@@ -46,7 +41,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* SISTEMA DE BOTONES MEJORADO */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -116,7 +110,6 @@ body {
   box-shadow: none;
 }
 
-/* SISTEMA DE FORMULARIOS MEJORADO */
 .form-group {
   margin-bottom: var(--space-md);
 }
@@ -156,7 +149,6 @@ body {
   min-height: 100px;
 }
 
-/* SISTEMA DE CARDS MEJORADO */
 .card {
   background: white;
   border: 1px solid var(--primary-100);
@@ -174,7 +166,6 @@ body {
   transform: translateY(-2px);
 }
 
-/* LAYOUT CONSISTENTE */
 .container {
   width: 100%;
   max-width: 1200px;
@@ -216,7 +207,6 @@ body {
 .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
 .grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
 
-/* UTILIDADES MEJORADAS */
 .text-center { text-align: center; }
 .text-left { text-align: left; }
 .text-right { text-align: right; }
@@ -276,7 +266,6 @@ body {
   50% { opacity: 0.7; }
 }
 
-/* ESTADOS VACÍOS */
 .empty-state {
   text-align: center;
   padding: var(--space-xl);
@@ -294,7 +283,6 @@ body {
   margin: 0 auto var(--space-sm);
 }
 
-/* RESPONSIVE MEJORADO */
 @media (max-width: 768px) {
   .page-container {
     padding: var(--space-sm);
@@ -332,7 +320,6 @@ body {
   }
 }
 
-/* COMPONENTES ESPECÍFICOS */
 .plan-card {
   border: 2px solid;
   border-radius: var(--radius-lg);
@@ -378,7 +365,6 @@ body {
   color: #dc2626;
 }
 
-/* MANTENER ESTILOS EXISTENTES */
 .fitlife-gradient {
   background: linear-gradient(135deg, var(--primary-50) 0%, #ffffff 100%);
 }

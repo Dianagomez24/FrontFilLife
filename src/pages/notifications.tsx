@@ -75,7 +75,6 @@ export default function NotificationsPage() {
           <p className="page-subtitle">Gestiona tus alertas y recordatorios</p>
         </div>
 
-        {/* SECCIÓN CORREGIDA - Botones de filtro */}
         <div className="card mb-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
@@ -111,7 +110,6 @@ export default function NotificationsPage() {
           </div>
         </div>
 
-        {/* LISTA DE NOTIFICACIONES */}
         <div className="card">
           {error && (
             <div className="bg-red-50 border-b border-red-200 text-red-700 px-6 py-4 rounded-t-lg">
