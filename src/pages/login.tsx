@@ -1,8 +1,8 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
-import { Mail, Lock, ArrowRight } from "lucide-react"
+import { useState, useEffect } from "react"
+import { Mail, Lock, ArrowRight, Eye, EyeOff } from "lucide-react"
 import { login, resendVerification } from "../service/auth"
 import type { LoginDto } from "../types/authTypes"
 
@@ -18,12 +18,65 @@ const Login: React.FC<LoginProps> = ({ onSwitchToRegister, onLoginSuccess }) => 
   const [error, setError] = useState("")
   const [needsVerification, setNeedsVerification] = useState(false)
   const [isResending, setIsResending] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [attempts, setAttempts] = useState(0)
+  const [isLocked, setIsLocked] = useState(false)
+  const [lockTime, setLockTime] = useState(0)
+
+  // Efecto para el bloqueo temporal
+  useEffect(() => {
+    if (isLocked && lockTime > 0) {
+      const timer = setTimeout(() => {
+        setLockTime(lockTime - 1)
+      }, 1000)
+      return () => clearTimeout(timer)
+    } else if (isLocked && lockTime === 0) {
+      setIsLocked(false)
+      setAttempts(0)
+    }
+  }, [isLocked, lockTime])
+
+  // Limpiar errores cuando el usuario empiece a escribir
+  useEffect(() => {
+    if (error) {
+      setError("")
+    }
+  }, [email, password])
+
+  const validateForm = () => {
+    if (!email || !password) {
+      setError("Por favor completa todos los campos")
+      return false
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      setError("Por favor ingresa un email válido")
+      return false
+    }
+
+    if (password.length < 6) {
+      setError("La contraseña debe tener al menos 6 caracteres")
+      return false
+    }
+
+    return true
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    if (isLocked) {
+      setError(`Demasiados intentos. Espera ${lockTime} segundos`)
+      return
+    }
+
+    if (!validateForm()) {
+      return
+    }
+
     setIsLoading(true)
     setError("")
-    setNeedsVerification(false)
 
     try {
       const loginData: LoginDto = { email, password }
@@ -31,23 +84,34 @@ const Login: React.FC<LoginProps> = ({ onSwitchToRegister, onLoginSuccess }) => 
 
       if (response.access_token) {
         localStorage.setItem("token", response.access_token)
+        setAttempts(0)
+        setIsLocked(false)
       }
 
       onLoginSuccess?.(response.user)
     } catch (err: any) {
-      console.log("[v0] Login error details:", err.response?.data)
+      console.log("Login error details:", err.response?.data)
 
-      if (err.response?.status === 401) {
+      const newAttempts = attempts + 1
+      setAttempts(newAttempts)
+
+      if (newAttempts >= 5) {
+        setIsLocked(true)
+        setLockTime(300)
+        setError("Demasiados intentos fallidos. Cuenta bloqueada por 5 minutos.")
+      } else if (err.response?.status === 401) {
         const errorMessage = err.response?.data?.message || ""
         if (errorMessage.includes("verificar") || errorMessage.includes("verify")) {
           setError("Debes verificar tu email antes de iniciar sesión")
           setNeedsVerification(true)
         } else {
-          setError("Email o contraseña incorrectos")
+          setError(`Email o contraseña incorrectos. Intentos restantes: ${5 - newAttempts}`)
         }
       } else if (err.response?.status === 403) {
         setError("Debes verificar tu email antes de iniciar sesión")
         setNeedsVerification(true)
+      } else if (err.response?.status === 429) {
+        setError("Demasiados intentos. Por favor espera antes de intentar nuevamente.")
       } else {
         setError("Error al iniciar sesión. Intenta de nuevo.")
       }
@@ -214,7 +278,7 @@ const Login: React.FC<LoginProps> = ({ onSwitchToRegister, onLoginSuccess }) => 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              disabled={isLoading}
+              disabled={isLoading || isLocked}
             />
           </div>
           <div className="form-group">
@@ -222,18 +286,42 @@ const Login: React.FC<LoginProps> = ({ onSwitchToRegister, onLoginSuccess }) => 
               <Lock size={16} />
               Contraseña
             </label>
-            <input
-              type="password"
-              className="form-input"
-              placeholder="········"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              disabled={isLoading}
-            />
+            <div style={{ position: 'relative' }}>
+              <input
+                type={showPassword ? "text" : "password"}
+                className="form-input"
+                placeholder="········"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                disabled={isLoading || isLocked}
+                style={{ paddingRight: '40px' }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '10px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: '#bcc591'
+                }}
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
           </div>
-          <button type="submit" className="submit-btn" disabled={isLoading}>
-            {isLoading ? "Iniciando sesión..." : "Iniciar Sesión"} <ArrowRight size={18} />
+          <button 
+            type="submit" 
+            className="submit-btn" 
+            disabled={isLoading || isLocked}
+          >
+            {isLoading ? "Iniciando sesión..." : isLocked ? `Cuenta bloqueada (${lockTime}s)` : "Iniciar Sesión"} 
+            <ArrowRight size={18} />
           </button>
         </form>
         <div className="forgot-password">

@@ -88,7 +88,7 @@ export function ExerciseItem({ exercise, index, canRemove, onChange, onRemove }:
           />
         </div>
         <div className="form-group">
-          <label className="form-label">Duración (segundos)</label>
+          <label className="form-label">Duración (Minutos)</label>
           <input
             type="number"
             min="0"

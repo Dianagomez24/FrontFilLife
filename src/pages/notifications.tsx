@@ -56,8 +56,8 @@ export default function NotificationsPage() {
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto py-8">
-          <div className="loading">
-            <div className="loading-spinner">
+          <div className="loading-improved">
+            <div className="loading-spinner-improved">
               <Bell className="text-white" size={24} />
             </div>
             <p className="text-[#2d3319]">Cargando notificaciones...</p>
@@ -75,7 +75,8 @@ export default function NotificationsPage() {
           <p className="page-subtitle">Gestiona tus alertas y recordatorios</p>
         </div>
 
-        <div className="card">
+        {/* SECCIÓN CORREGIDA - Botones de filtro */}
+        <div className="card mb-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
@@ -102,7 +103,7 @@ export default function NotificationsPage() {
             </div>
             <button
               onClick={markAllAsRead}
-              className="btn btn-primary btn-sm"
+              className="btn btn-primary btn-sm flex items-center gap-2"
             >
               <CheckCircle size={16} />
               Marcar todas como leídas
@@ -110,9 +111,8 @@ export default function NotificationsPage() {
           </div>
         </div>
 
-        
+        {/* LISTA DE NOTIFICACIONES */}
         <div className="card">
-          
           {error && (
             <div className="bg-red-50 border-b border-red-200 text-red-700 px-6 py-4 rounded-t-lg">
               {error}
@@ -164,7 +164,7 @@ export default function NotificationsPage() {
                           {!notification.leida && (
                             <button
                               onClick={() => notification.id && markAsRead(notification.id)}
-                              className="btn btn-secondary btn-sm"
+                              className="btn btn-secondary btn-sm flex items-center gap-1"
                               title="Marcar como leída"
                             >
                               <CheckCircle size={16} />
@@ -172,7 +172,7 @@ export default function NotificationsPage() {
                           )}
                           <button
                             onClick={() => notification.id && deleteNotification(notification.id)}
-                            className="btn btn-danger btn-sm"
+                            className="btn btn-danger btn-sm flex items-center gap-1"
                             title="Eliminar"
                           >
                             <Trash2 size={16} />

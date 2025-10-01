@@ -139,7 +139,7 @@ export function EditNutritionPlanForm({ plan, onSubmit, onCancel }: EditNutritio
                 type="text"
 
                 className="form-input"
-                placeholder="Ej: Plan Mediterráneo"
+                placeholder="Ej: Plan mediterráneo para volumen"
                 value={formData.nombre || ''}
 
                 onChange={(e) => handleInputChange("nombre", e.target.value)}

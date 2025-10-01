@@ -216,51 +216,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
         )}
       </div>
 
-      <div className="bg-white rounded-2xl p-8 shadow-sm border border-[#c4c9b5]/20">
-
-        <div className="flex items-center gap-3 mb-6">
-          
-          <div className="w-10 h-10 bg-gradient-to-br from-[#aeb99d] to-[#c4c9b5] rounded-lg flex items-center justify-center">
-            <Target className="text-white" size={20} />
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold text-[#2d3319]">Acciones Rápidas</h2>
-            <p className="text-[#bcc591]">Gestiona tu salud y fitness</p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-gradient-to-br from-[#959581] to-[#aeb99d] rounded-xl p-6 text-white hover:shadow-lg transition-all cursor-pointer">
-            <div className="flex items-center gap-4">
-              <Dumbbell className="text-white" size={32} />
-              <div>
-                <h3 className="font-semibold text-lg">Planes de Ejercicio</h3>
-                <p className="text-white/80 text-sm">
-                  {exercisePlans.length > 0 
-                    ? `Tienes ${exercisePlans.length} planes de ejercicio` 
-                    : 'Crea tu primer plan de ejercicio'
-                  }
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-br from-[#aeb99d] to-[#c4c9b5] rounded-xl p-6 text-white hover:shadow-lg transition-all cursor-pointer">
-            <div className="flex items-center gap-4">
-              <Apple className="text-white" size={32} />
-              <div>
-                <h3 className="font-semibold text-lg">Planes de Nutrición</h3>
-                <p className="text-white/80 text-sm">
-                  {nutritionPlans.length > 0 
-                    ? `Tienes ${nutritionPlans.length} planes de nutrición` 
-                    : 'Crea tu primer plan de nutrición'
-                  }
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      
     </div>
   );
 };

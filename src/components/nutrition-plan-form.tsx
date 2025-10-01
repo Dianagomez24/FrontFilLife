@@ -111,7 +111,7 @@ export function NutritionPlanForm({ onCancel, onSubmit }: NutritionPlanFormProps
               <input
                 type="text"
                 className="form-input"
-                placeholder="Ej: Plan Mediterráneo"
+                placeholder="Ej: Plan nutricional para volumen"
                 value={formData.nombre}
                 onChange={(e) => handleInputChange("nombre", e.target.value)}
               />

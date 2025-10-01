@@ -1,8 +1,8 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
-import { User, Mail, Lock, Sparkles } from "lucide-react"
+import { useState, useEffect } from "react"
+import { User, Mail, Lock, Sparkles, Eye, EyeOff, CheckCircle, XCircle } from "lucide-react"
 import { register } from "../service/auth"
 import type { RegisterDto } from "../types/authTypes"
 
@@ -22,17 +22,57 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onRegisterSuccess 
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [passwordStrength, setPasswordStrength] = useState(0)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  useEffect(() => {
+    const calculateStrength = (password: string) => {
+      let strength = 0
+      if (password.length >= 6) strength += 1
+      if (password.length >= 8) strength += 1
+      if (/[A-Z]/.test(password)) strength += 1
+      if (/[0-9]/.test(password)) strength += 1
+      if (/[^A-Za-z0-9]/.test(password)) strength += 1
+      return strength
+    }
+    setPasswordStrength(calculateStrength(formData.password))
+  }, [formData.password])
 
-    if (formData.password !== formData.confirmPassword) {
-      setError("Las contraseñas no coinciden")
-      return
+  const validateForm = () => {
+    if (!formData.nombre || !formData.apellidos || !formData.email || !formData.password || !formData.confirmPassword) {
+      setError("Por favor completa todos los campos")
+      return false
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(formData.email)) {
+      setError("Por favor ingresa un email válido")
+      return false
     }
 
     if (formData.password.length < 6) {
       setError("La contraseña debe tener al menos 6 caracteres")
+      return false
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      setError("Las contraseñas no coinciden")
+      return false
+    }
+
+    if (passwordStrength < 2) {
+      setError("La contraseña es muy débil. Usa mayúsculas, números y caracteres especiales.")
+      return false
+    }
+
+    return true
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!validateForm()) {
       return
     }
 
@@ -41,9 +81,9 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onRegisterSuccess 
 
     try {
       const registerData: RegisterDto = {
-        nombre: formData.nombre,
-        apellidos: formData.apellidos,
-        email: formData.email,
+        nombre: formData.nombre.trim(),
+        apellidos: formData.apellidos.trim(),
+        email: formData.email.toLowerCase().trim(),
         password: formData.password,
       }
 
@@ -74,6 +114,22 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onRegisterSuccess 
       [e.target.name]: e.target.value,
     })
     if (error) setError("")
+  }
+
+  const getPasswordStrengthText = () => {
+    if (formData.password.length === 0) return ""
+    if (passwordStrength <= 1) return "Muy débil"
+    if (passwordStrength <= 2) return "Débil"
+    if (passwordStrength <= 3) return "Media"
+    if (passwordStrength <= 4) return "Fuerte"
+    return "Muy fuerte"
+  }
+
+  const getPasswordStrengthColor = () => {
+    if (passwordStrength <= 1) return "#ef4444"
+    if (passwordStrength <= 2) return "#f59e0b"
+    if (passwordStrength <= 3) return "#10b981"
+    return "#059669"
   }
 
   const FitLifeIcon = () => (
@@ -187,6 +243,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onRegisterSuccess 
                 onChange={handleChange}
                 required
                 disabled={isLoading || success}
+                maxLength={50}
               />
             </div>
             <div className="form-group">
@@ -200,6 +257,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onRegisterSuccess 
                 onChange={handleChange}
                 required
                 disabled={isLoading || success}
+                maxLength={50}
               />
             </div>
           </div>
@@ -224,29 +282,114 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onRegisterSuccess 
               <Lock size={16} />
               Contraseña
             </label>
-            <input
-              type="password"
-              name="password"
-              className="form-input"
-              placeholder="········"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              disabled={isLoading || success}
-            />
+            <div style={{ position: 'relative' }}>
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                className="form-input"
+                placeholder="········"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                disabled={isLoading || success}
+                style={{ paddingRight: '40px' }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '10px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: '#bcc591'
+                }}
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+            
+            {formData.password && (
+              <div style={{ marginTop: '8px' }}>
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '8px',
+                  fontSize: '12px',
+                  color: getPasswordStrengthColor()
+                }}>
+                  <span>Fortaleza: {getPasswordStrengthText()}</span>
+                  {passwordStrength >= 3 ? <CheckCircle size={12} /> : <XCircle size={12} />}
+                </div>
+                <div style={{
+                  height: '4px',
+                  background: '#e5e7eb',
+                  borderRadius: '2px',
+                  marginTop: '4px',
+                  overflow: 'hidden'
+                }}>
+                  <div style={{
+                    height: '100%',
+                    width: `${(passwordStrength / 5) * 100}%`,
+                    background: getPasswordStrengthColor(),
+                    transition: 'all 0.3s ease'
+                  }} />
+                </div>
+              </div>
+            )}
           </div>
           <div className="form-group">
             <label className="form-label">Confirmar Contraseña</label>
-            <input
-              type="password"
-              name="confirmPassword"
-              className="form-input"
-              placeholder="········"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-              disabled={isLoading || success}
-            />
+            <div style={{ position: 'relative' }}>
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                name="confirmPassword"
+                className="form-input"
+                placeholder="········"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                required
+                disabled={isLoading || success}
+                style={{ paddingRight: '40px' }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '10px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: '#bcc591'
+                }}
+              >
+                {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+            
+            {formData.confirmPassword && (
+              <div style={{ 
+                marginTop: '4px',
+                fontSize: '12px',
+                color: formData.password === formData.confirmPassword ? '#10b981' : '#ef4444',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}>
+                {formData.password === formData.confirmPassword ? 
+                  <CheckCircle size={12} /> : <XCircle size={12} />
+                }
+                {formData.password === formData.confirmPassword ? 
+                  "Las contraseñas coinciden" : "Las contraseñas no coinciden"
+                }
+              </div>
+            )}
           </div>
           <button type="submit" className="submit-btn" disabled={isLoading || success}>
             {isLoading ? "Creando cuenta..." : success ? "¡Cuenta creada!" : "Crear Cuenta"} <Sparkles size={18} />
