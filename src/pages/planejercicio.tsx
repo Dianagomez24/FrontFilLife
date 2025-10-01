@@ -9,7 +9,7 @@ export default function PlanEjercicioPage() {
           <p className="text-muted-foreground">Crea y gestiona tus planes de ejercicio personalizados</p>
         </div>
 
-        <ExercisePlanForm user={{ id: 1, name: "Demo User" }} />
+        <ExercisePlanForm />
       </div>
     </div>
   )
