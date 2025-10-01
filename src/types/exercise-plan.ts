@@ -1,22 +1,41 @@
 export interface Exercise {
   nombre: string
-  series: number
-  repeticiones: string
-  descanso: string
+  series?: number
+  repeticiones?: number
+  peso?: number
+  duracion?: number
+  descanso?: number
   notas?: string
 }
 
 export interface ExercisePlan {
   id?: number
-  usuario_id?: number
+  usuarioId?: number
   nombre: string
-  descripcion: string
+  descripcion?: string
   ejercicios: Exercise[]
-  duracion_minutos: number
-  nivel_dificultad: "principiante" | "intermedio" | "avanzado"
-  activo: boolean
-  fecha_creacion?: string
-  fecha_actualizacion?: string
+  duracionMinutos?: number
+  nivelDificultad?: "PRINCIPIANTE" | "INTERMEDIO" | "AVANZADO"
+  activo?: boolean
+  fechaCreacion?: string
+  fechaActualizacion?: string
+}
+
+export interface CreateExercisePlanDto {
+  nombre: string
+  descripcion?: string
+  ejercicios: Exercise[]
+  duracionMinutos?: number
+  nivelDificultad?: "PRINCIPIANTE" | "INTERMEDIO" | "AVANZADO"
+}
+
+export interface UpdateExercisePlanDto {
+  nombre?: string
+  descripcion?: string
+  ejercicios?: Exercise[]
+  duracionMinutos?: number
+  nivelDificultad?: "PRINCIPIANTE" | "INTERMEDIO" | "AVANZADO"
+  activo?: boolean
 }
 
 export interface User {

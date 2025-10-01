@@ -1,21 +1,44 @@
-export interface Meal {
+export interface Alimento {
   nombre: string
-  tipo: "desayuno" | "almuerzo" | "cena" | "snack"
-  alimentos: string
-  calorias: number
+  cantidad?: string
+  calorias?: number
+  proteinas?: number
+  carbohidratos?: number
+  grasas?: number
+}
+
+export interface Comida {
+  nombre: string
+  horario?: string
+  alimentos: Alimento[]
   notas?: string
 }
 
 export interface NutritionPlan {
   id?: number
-  usuario_id?: number
+  usuarioId?: number
   nombre: string
-  descripcion: string
-  comidas: Meal[]
-  calorias_objetivo: number
-  activo: boolean
-  fecha_creacion?: string
-  fecha_actualizacion?: string
+  descripcion?: string
+  comidas: Comida[]
+  caloriasObjetivo?: number
+  activo?: boolean
+  fechaCreacion?: string
+  fechaActualizacion?: string
+}
+
+export interface CreateNutritionPlanDto {
+  nombre: string
+  descripcion?: string
+  comidas: Comida[]
+  caloriasObjetivo?: number
+}
+
+export interface UpdateNutritionPlanDto {
+  nombre?: string
+  descripcion?: string
+  comidas?: Comida[]
+  caloriasObjetivo?: number
+  activo?: boolean
 }
 
 export interface User {
