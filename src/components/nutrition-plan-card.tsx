@@ -1,33 +1,41 @@
 "use client"
-import type React from "react"
-import { Target, Utensils, CheckCircle, Trash2 } from "lucide-react"
+import { Target, Utensils, CheckCircle, Trash2, Eye } from "lucide-react"
 import type { NutritionPlan } from "../types/nutrition"
 
 interface NutritionPlanCardProps {
   plan: NutritionPlan
   onToggleStatus: (planId: number) => void
   onDelete: (planId: number) => void
+  onViewDetails: (plan: NutritionPlan) => void
 }
 
-const NutritionPlanCard: React.FC<NutritionPlanCardProps> = ({ plan, onToggleStatus, onDelete }) => {
+export function NutritionPlanCard({ plan, onToggleStatus, onDelete, onViewDetails }: NutritionPlanCardProps) {
+  const totalCalories = plan.comidas.reduce((total, comida) => {
+    const comidaCalorias = comida.alimentos.reduce((sum, alimento) => sum + (alimento.calorias || 0), 0)
+    return total + comidaCalorias
+  }, 0)
+
   return (
-    <div
-      className={`border-2 rounded-xl p-6 transition-all hover:shadow-lg ${
-        plan.activo ? "border-[#aeb99d] bg-[#aeb99d]/5" : "border-gray-200 bg-gray-50"
-      }`}
-    >
+    <div className={`plan-card ${plan.activo ? 'active' : ''} card-hover`}>
       <div className="flex items-start justify-between mb-4">
         <div>
           <h3 className="font-bold text-[#2d3319] text-lg mb-1">{plan.nombre}</h3>
-          <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-            {plan.calorias_objetivo} cal/día
+          <span className="nivel-badge nivel-principiante">
+            {plan.caloriasObjetivo || totalCalories} cal/día
           </span>
         </div>
         <div className="flex gap-2">
           <button
+            onClick={() => onViewDetails(plan)}
+            className="btn btn-secondary btn-sm"
+            title="Ver detalles"
+          >
+            <Eye size={16} />
+          </button>
+          <button
             onClick={() => onToggleStatus(plan.id!)}
-            className={`p-2 rounded-lg transition-colors ${
-              plan.activo ? "bg-green-100 text-green-600" : "bg-gray-100 text-gray-400"
+            className={`btn btn-sm ${
+              plan.activo ? "btn-primary" : "btn-secondary"
             }`}
             title={plan.activo ? "Desactivar plan" : "Activar plan"}
           >
@@ -35,7 +43,7 @@ const NutritionPlanCard: React.FC<NutritionPlanCardProps> = ({ plan, onToggleSta
           </button>
           <button
             onClick={() => onDelete(plan.id!)}
-            className="p-2 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
+            className="btn btn-danger btn-sm"
             title="Eliminar plan"
           >
             <Trash2 size={16} />
@@ -48,7 +56,7 @@ const NutritionPlanCard: React.FC<NutritionPlanCardProps> = ({ plan, onToggleSta
       <div className="space-y-3">
         <div className="flex items-center gap-2 text-sm text-[#2d3319]">
           <Target size={16} className="text-[#aeb99d]" />
-          <span>{plan.calorias_objetivo} calorías objetivo</span>
+          <span>{plan.caloriasObjetivo || totalCalories} calorías objetivo</span>
         </div>
         <div className="flex items-center gap-2 text-sm text-[#2d3319]">
           <Utensils size={16} className="text-[#aeb99d]" />
@@ -57,10 +65,8 @@ const NutritionPlanCard: React.FC<NutritionPlanCardProps> = ({ plan, onToggleSta
       </div>
 
       <div className="mt-4 pt-4 border-t border-gray-200">
-        <div className="text-xs text-[#bcc591]">Creado: {new Date(plan.fecha_creacion!).toLocaleDateString()}</div>
+        <div className="text-xs text-[#bcc591]">Creado: {new Date(plan.fechaCreacion!).toLocaleDateString()}</div>
       </div>
     </div>
   )
 }
-
-export default NutritionPlanCard

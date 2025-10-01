@@ -8,9 +8,10 @@ interface PlansListProps {
   plans: ExercisePlan[]
   onToggleStatus: (planId: number) => void
   onDelete: (planId: number) => void
+  onViewDetails: (plan: ExercisePlan) => void
 }
 
-export function PlansList({ plans, onToggleStatus, onDelete }: PlansListProps) {
+export function PlansList({ plans, onToggleStatus, onDelete, onViewDetails }: PlansListProps) {
   return (
     <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
       <h2 className="text-2xl font-bold text-[#2d3319] mb-6 flex items-center gap-3">
@@ -29,7 +30,13 @@ export function PlansList({ plans, onToggleStatus, onDelete }: PlansListProps) {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {plans.map((plan) => (
-            <PlanCard key={plan.id} plan={plan} onToggleStatus={onToggleStatus} onDelete={onDelete} />
+            <PlanCard 
+              key={plan.id} 
+              plan={plan} 
+              onToggleStatus={onToggleStatus} 
+              onDelete={onDelete}
+              onViewDetails={onViewDetails}
+            />
           ))}
         </div>
       )}
