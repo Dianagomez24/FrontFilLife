@@ -1,30 +1,43 @@
 "use client"
 
-import { useState } from "react"
-import { Dumbbell, Plus, CheckCircle } from "lucide-react"
+import { useState, useEffect } from "react"
+import { Dumbbell, Plus, Save, ArrowLeft } from "lucide-react"
 import { ExerciseItem } from "./exercise-item"
-import type { CreateExercisePlanDto, Exercise } from "../types/exercise-plan"
+import type { ExercisePlan, UpdateExercisePlanDto, Exercise } from "../types/exercise-plan"
 
-interface CreatePlanFormProps {
-  onSubmit: (plan: CreateExercisePlanDto) => void
+interface EditPlanFormProps {
+  plan: ExercisePlan
+  onSubmit: (planId: number, planData: UpdateExercisePlanDto) => void
   onCancel: () => void
 }
 
-export function CreatePlanForm({ onSubmit, onCancel }: CreatePlanFormProps) {
-  const [formData, setFormData] = useState<CreateExercisePlanDto>({
-    nombre: "",
-    descripcion: "",
-    ejercicios: [{ nombre: "", series: 1, repeticiones: 8, descanso: 60, notas: "" }],
-    duracionMinutos: 30,
-    nivelDificultad: "PRINCIPIANTE",
+export function EditPlanForm({ plan, onSubmit, onCancel }: EditPlanFormProps) {
+  const [formData, setFormData] = useState<UpdateExercisePlanDto>({
+    nombre: plan.nombre,
+    descripcion: plan.descripcion,
+    ejercicios: plan.ejercicios,
+    duracionMinutos: plan.duracionMinutos,
+    nivelDificultad: plan.nivelDificultad,
+    activo: plan.activo,
   })
 
-  const handleInputChange = (field: keyof CreateExercisePlanDto, value: any) => {
+  useEffect(() => {
+    setFormData({
+      nombre: plan.nombre,
+      descripcion: plan.descripcion,
+      ejercicios: plan.ejercicios,
+      duracionMinutos: plan.duracionMinutos,
+      nivelDificultad: plan.nivelDificultad,
+      activo: plan.activo,
+    })
+  }, [plan])
+
+  const handleInputChange = (field: keyof UpdateExercisePlanDto, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
   const handleExerciseChange = (index: number, field: keyof Exercise, value: any) => {
-    const newEjercicios = [...formData.ejercicios]
+    const newEjercicios = [...(formData.ejercicios || [])]
     newEjercicios[index] = { ...newEjercicios[index], [field]: value }
     setFormData((prev) => ({ ...prev, ejercicios: newEjercicios }))
   }
@@ -32,52 +45,56 @@ export function CreatePlanForm({ onSubmit, onCancel }: CreatePlanFormProps) {
   const addExercise = () => {
     setFormData((prev) => ({
       ...prev,
-      ejercicios: [...prev.ejercicios, { nombre: "", series: 1, repeticiones: 8, descanso: 60, notas: "" }],
+      ejercicios: [...(prev.ejercicios || []), { nombre: "", series: 1, repeticiones: 8, descanso: 60, notas: "" }],
     }))
   }
 
   const removeExercise = (index: number) => {
-    if (formData.ejercicios.length > 1) {
+    if (formData.ejercicios && formData.ejercicios.length > 1) {
       setFormData((prev) => ({
         ...prev,
-        ejercicios: prev.ejercicios.filter((_, i) => i !== index),
+        ejercicios: prev.ejercicios!.filter((_, i) => i !== index),
       }))
     }
   }
 
   const handleSubmit = () => {
-    const ejerciciosValidos = formData.ejercicios.every(ej => ej.nombre.trim() !== '')
+    const ejerciciosValidos = formData.ejercicios!.every(ej => ej.nombre.trim() !== '')
     if (!ejerciciosValidos) {
       alert('Por favor, complete al menos el nombre de cada ejercicio')
       return
     }
 
-    onSubmit(formData)
-    setFormData({
-      nombre: "",
-      descripcion: "",
-      ejercicios: [{ nombre: "", series: 1, repeticiones: 8, descanso: 60, notas: "" }],
-      duracionMinutos: 30,
-      nivelDificultad: "PRINCIPIANTE",
-    })
+    onSubmit(plan.id!, formData)
   }
 
   const isFormValid = () => {
     return (
-      formData.nombre.trim() &&
-      formData.ejercicios.every((ej) => ej.nombre.trim())
+      formData.nombre!.trim() &&
+      formData.ejercicios!.every((ej) => ej.nombre.trim())
     )
   }
 
   return (
     <div className="container">
       <div className="card">
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-gradient-to-br from-[#959581] to-[#aeb99d] rounded-full flex items-center justify-center mx-auto mb-4">
-            <Dumbbell className="text-white" size={24} />
+        <div className="flex items-center gap-4 mb-8">
+          <button
+            onClick={onCancel}
+            className="btn btn-secondary btn-sm"
+          >
+            <ArrowLeft size={16} />
+            Volver
+          </button>
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-[#959581] to-[#aeb99d] rounded-full flex items-center justify-center">
+              <Dumbbell className="text-white" size={20} />
+            </div>
+            <div>
+              <h2 className="page-title">Editar Plan de Ejercicio</h2>
+              <p className="page-subtitle">Modifica tu rutina personalizada</p>
+            </div>
           </div>
-          <h2 className="page-title">Crear Plan de Ejercicio</h2>
-          <p className="page-subtitle">Diseña tu rutina personalizada</p>
         </div>
 
         <div className="space-y-6">
@@ -142,10 +159,36 @@ export function CreatePlanForm({ onSubmit, onCancel }: CreatePlanFormProps) {
                     }`}
                   >
                     <div className="font-semibold text-[#2d3319]">{nivel.label}</div>
-                    <div className="text-sm text-[#bcc591]">{nivel.desc}</div>
+                    <div className="text-sm text-[#bcc591] mt-1">{nivel.desc}</div>
                   </div>
                 </label>
               ))}
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Estado</label>
+            <div className="flex gap-6">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="radio"
+                  name="activo"
+                  checked={formData.activo === true}
+                  onChange={() => handleInputChange("activo", true)}
+                  className="w-4 h-4 text-[#959581] focus:ring-[#959581] border-gray-300"
+                />
+                <span className="text-[#2d3319] font-medium">Activo</span>
+              </label>
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="radio"
+                  name="activo"
+                  checked={formData.activo === false}
+                  onChange={() => handleInputChange("activo", false)}
+                  className="w-4 h-4 text-[#959581] focus:ring-[#959581] border-gray-300"
+                />
+                <span className="text-[#2d3319] font-medium">Inactivo</span>
+              </label>
             </div>
           </div>
 
@@ -163,12 +206,12 @@ export function CreatePlanForm({ onSubmit, onCancel }: CreatePlanFormProps) {
             </div>
 
             <div className="space-y-4">
-              {formData.ejercicios.map((ejercicio, index) => (
+              {formData.ejercicios!.map((ejercicio, index) => (
                 <ExerciseItem
                   key={index}
                   exercise={ejercicio}
                   index={index}
-                  canRemove={formData.ejercicios.length > 1}
+                  canRemove={formData.ejercicios!.length > 1}
                   onChange={(field, value) => handleExerciseChange(index, field, value)}
                   onRemove={() => removeExercise(index)}
                 />
@@ -191,8 +234,8 @@ export function CreatePlanForm({ onSubmit, onCancel }: CreatePlanFormProps) {
               isFormValid() ? "btn-primary" : ""
             }`}
           >
-            <CheckCircle size={20} />
-            Guardar Plan
+            <Save size={20} />
+            Guardar Cambios
           </button>
         </div>
       </div>

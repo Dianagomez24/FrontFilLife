@@ -1,21 +1,8 @@
-"use client"
 import type React from "react"
-import { useState } from "react"
-import {
-  ArrowRight,
-  CheckCircle,
-  User,
-  Activity,
-  Target,
-  Heart,
-  Edit,
-  Scale,
-  Ruler,
-  Calendar,
-  Trophy,
-  Clock,
-  MapPin,
-} from "lucide-react"
+import { useState, useEffect } from "react"
+import { ArrowRight, CheckCircle, User, Activity, Target, Heart, Edit, Scale, Ruler, Calendar, Trophy } from "lucide-react"
+import { createDatosFisicos, getDatosFisicos, updateDatosFisicos } from '../service/users'
+import type { DatosFisicos as BackendDatosFisicos } from '../types/userTypes'
 
 interface HealthQuestionnaireProps {
   onComplete: (healthData: any) => void
@@ -29,17 +16,15 @@ interface QuestionnaireData {
   nivelActividad: string
   objetivo: string
   experiencia: string
-  enfermedades: string[]
   limitaciones: string
-  medicamentos: string
-  lesiones: string
-  disponibilidadTiempo: string
-  lugarEntrenamiento: string
 }
 
 const HealthQuestionnaire: React.FC<HealthQuestionnaireProps> = ({ onComplete }) => {
-  const [currentStep, setCurrentStep] = useState(0) // 0 = pantalla de introducción
-  const [showProfile, setShowProfile] = useState(false) // Added state to show profile view
+  const [currentStep, setCurrentStep] = useState(0)
+  const [showProfile, setShowProfile] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [savedData, setSavedData] = useState<BackendDatosFisicos | null>(null)
   const [formData, setFormData] = useState<QuestionnaireData>({
     edad: "",
     sexo: "",
@@ -48,28 +33,134 @@ const HealthQuestionnaire: React.FC<HealthQuestionnaireProps> = ({ onComplete })
     nivelActividad: "",
     objetivo: "",
     experiencia: "",
-    enfermedades: [],
     limitaciones: "",
-    medicamentos: "",
-    lesiones: "",
-    disponibilidadTiempo: "",
-    lugarEntrenamiento: "",
   })
 
   const totalSteps = 4
 
-  const handleInputChange = (field: keyof QuestionnaireData, value: string | string[]) => {
+  useEffect(() => {
+    const loadExistingData = async () => {
+      try {
+        const existingData = await getDatosFisicos()
+        setSavedData(existingData)
+        setShowProfile(true)
+        console.log('Datos existentes cargados:', existingData)
+      } catch (error) {
+        console.log('No hay datos existentes o error al cargarlos:', error)
+      }
+    }
+
+    loadExistingData()
+  }, [])
+
+  const handleInputChange = (field: keyof QuestionnaireData, value: string) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }))
   }
 
-  const handleEnfermedadChange = (enfermedad: string, checked: boolean) => {
-    setFormData((prev) => ({
-      ...prev,
-      enfermedades: checked ? [...prev.enfermedades, enfermedad] : prev.enfermedades.filter((e) => e !== enfermedad),
-    }))
+  const mapFromBackendFormat = (data: BackendDatosFisicos): QuestionnaireData => {
+    const sexoMap: { [key: string]: string } = {
+      'M': 'masculino',
+      'F': 'femenino', 
+      'Otro': 'otro'
+    }
+
+    const nivelActividadMap: { [key: string]: string } = {
+      'Sedentario': 'sedentario',
+      'Ligero': 'ligero',
+      'Moderado': 'moderado',
+      'Intenso': 'activo'
+    }
+
+    const experienciaMap: { [key: string]: string } = {
+      'Principiante': 'principiante',
+      'Intermedio': 'intermedio',
+      'Avanzado': 'avanzado'
+    }
+
+    return {
+      edad: data.edad.toString(),
+      sexo: sexoMap[data.sexo] || 'otro',
+      peso: data.peso.toString(),
+      altura: data.altura.toString(),
+      nivelActividad: nivelActividadMap[data.nivelActividad] || 'sedentario',
+      objetivo: data.objetivo || '',
+      experiencia: experienciaMap[data.experiencia] || 'principiante',
+      limitaciones: data.limitaciones || ''
+    }
+  }
+
+  const mapToBackendFormat = (data: QuestionnaireData) => {
+    const sexoMap: { [key: string]: 'M' | 'F' | 'Otro' } = {
+      'masculino': 'M',
+      'femenino': 'F', 
+      'otro': 'Otro'
+    }
+
+    const nivelActividadMap: { [key: string]: 'Sedentario' | 'Ligero' | 'Moderado' | 'Intenso' } = {
+      'sedentario': 'Sedentario',
+      'ligero': 'Ligero',
+      'moderado': 'Moderado',
+      'activo': 'Intenso'
+    }
+
+    const experienciaMap: { [key: string]: 'Principiante' | 'Intermedio' | 'Avanzado' } = {
+      'principiante': 'Principiante',
+      'intermedio': 'Intermedio',
+      'avanzado': 'Avanzado'
+    }
+
+    return {
+      edad: parseInt(data.edad),
+      sexo: sexoMap[data.sexo] || 'Otro',
+      peso: parseFloat(data.peso),
+      altura: parseInt(data.altura),
+      nivelActividad: nivelActividadMap[data.nivelActividad] || 'Sedentario',
+      objetivo: data.objetivo,
+      experiencia: experienciaMap[data.experiencia] || 'Principiante',
+      limitaciones: data.limitaciones || undefined
+    }
+  }
+
+  const handleSubmit = async () => {
+    setLoading(true)
+    setError(null)
+    
+    try {
+      const backendData = mapToBackendFormat(formData)
+      console.log('Enviando datos al backend:', backendData)
+      
+      let result
+      if (savedData) {
+
+        console.log('Actualizando datos existentes...')
+        result = await updateDatosFisicos(backendData)
+      } else {
+
+
+        console.log('Creando nuevos datos...')
+        result = await createDatosFisicos(backendData)
+      }
+      
+      console.log('Respuesta del backend:', result)
+      
+      const savedDataFromBackend: BackendDatosFisicos = result.datosFisicos
+      setSavedData(savedDataFromBackend)
+      
+      console.log('Datos físicos guardados exitosamente')
+      setShowProfile(true)
+      
+      if (onComplete) {
+        onComplete(savedDataFromBackend)
+      }
+    } catch (err: any) {
+      console.error('Error al guardar datos físicos:', err)
+      setError(err.response?.data?.message || 'Error al guardar los datos. Por favor, intenta nuevamente.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const nextStep = () => {
@@ -84,17 +175,24 @@ const HealthQuestionnaire: React.FC<HealthQuestionnaireProps> = ({ onComplete })
     }
   }
 
-  const handleSubmit = () => {
-    console.log("Health data saved:", formData)
-    setShowProfile(true) // Show profile view instead of just logging
-    // Optionally, you can call onComplete(formData) here if it's needed for other purposes (e.g., saving to a backend)
-    // onComplete(formData)
-  }
-
   const calculateBMI = () => {
-    const weight = Number.parseFloat(formData.peso)
-    const heightInMeters = Number.parseFloat(formData.altura) / 100
-    if (weight && heightInMeters) {
+    const dataToUse = savedData || {
+      edad: parseInt(formData.edad) || 0,
+      sexo: formData.sexo,
+      peso: parseFloat(formData.peso) || 0,
+      altura: parseInt(formData.altura) || 0,
+      nivelActividad: formData.nivelActividad,
+      objetivo: formData.objetivo,
+      experiencia: formData.experiencia,
+
+      limitaciones: formData.limitaciones
+    }
+
+    const weight = dataToUse.peso
+    const height = dataToUse.altura
+    const heightInMeters = height / 100
+    
+    if (weight && heightInMeters && weight > 0 && height > 0) {
       return (weight / (heightInMeters * heightInMeters)).toFixed(1)
     }
     return null
@@ -109,10 +207,14 @@ const HealthQuestionnaire: React.FC<HealthQuestionnaireProps> = ({ onComplete })
 
   const getActivityLevelText = (level: string) => {
     const levels: { [key: string]: string } = {
-      sedentario: "Sedentario",
-      ligero: "Ligero",
-      moderado: "Moderado",
-      activo: "Muy activo",
+      'sedentario': 'Sedentario',
+      'ligero': 'Ligero', 
+      'moderado': 'Moderado',
+      'activo': 'Intenso',
+      'Sedentario': 'Sedentario',
+      'Ligero': 'Ligero',
+      'Moderado': 'Moderado',
+      'Intenso': 'Intenso'
     }
     return levels[level] || level
   }
@@ -121,15 +223,64 @@ const HealthQuestionnaire: React.FC<HealthQuestionnaireProps> = ({ onComplete })
     const objectives: { [key: string]: string } = {
       "perder-peso": "Perder peso",
       "ganar-musculo": "Ganar músculo",
-      mantenerse: "Mantenerme en forma",
-      resistencia: "Mejorar resistencia",
-      fuerza: "Aumentar fuerza",
+      "mantenerse": "Mantenerme en forma",
+      "resistencia": "Mejorar resistencia",
+      "fuerza": "Aumentar fuerza",
       "salud-general": "Salud general",
     }
     return objectives[objective] || objective
   }
 
+  const getSexoText = (sexo: string) => {
+    const sexoMap: { [key: string]: string } = {
+      'M': 'Masculino',
+      'F': 'Femenino',
+      'Otro': 'Otro',
+      'masculino': 'Masculino',
+      'femenino': 'Femenino',
+      'otro': 'Otro'
+    }
+    return sexoMap[sexo] || sexo
+  }
+
+  const getExperienciaText = (experiencia: string) => {
+    const expMap: { [key: string]: string } = {
+      'Principiante': 'Principiante',
+      'Intermedio': 'Intermedio',
+      'Avanzado': 'Avanzado',
+      'principiante': 'Principiante',
+      'intermedio': 'Intermedio',
+      'avanzado': 'Avanzado'
+    }
+    return expMap[experiencia] || experiencia
+  }
+
+  const loadExistingDataIntoForm = () => {
+    if (savedData) {
+      const formDataFromBackend = mapFromBackendFormat(savedData)
+      setFormData(formDataFromBackend)
+      console.log('Datos cargados en formulario:', formDataFromBackend)
+    }
+    setShowProfile(false)
+    setCurrentStep(1) 
+  }
+
   const renderProfile = () => {
+
+
+    const dataToUse = savedData ? {
+      edad: savedData.edad.toString(),
+      sexo: savedData.sexo,
+      peso: savedData.peso.toString(),
+      altura: savedData.altura.toString(),
+
+
+      nivelActividad: savedData.nivelActividad,
+      objetivo: savedData.objetivo || '',
+      experiencia: savedData.experiencia,
+      limitaciones: savedData.limitaciones || ''
+    } : formData
+
     const bmi = calculateBMI()
     const bmiData = bmi ? getBMICategory(Number.parseFloat(bmi)) : null
 
@@ -146,7 +297,6 @@ const HealthQuestionnaire: React.FC<HealthQuestionnaireProps> = ({ onComplete })
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Información Básica */}
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 bg-gradient-to-br from-[#959581] to-[#aeb99d] rounded-lg flex items-center justify-center">
@@ -157,17 +307,19 @@ const HealthQuestionnaire: React.FC<HealthQuestionnaireProps> = ({ onComplete })
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <Calendar className="text-[#bcc591]" size={16} />
-                <span className="text-[#2d3319]">{formData.edad} años</span>
+
+                <span className="text-[#2d3319]">{dataToUse.edad} años</span>
               </div>
               <div className="flex items-center gap-2">
                 <User className="text-[#bcc591]" size={16} />
-                <span className="text-[#2d3319] capitalize">{formData.sexo}</span>
+                <span className="text-[#2d3319]">{getSexoText(dataToUse.sexo)}</span>
               </div>
             </div>
           </div>
 
-          {/* Medidas Corporales */}
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+
+
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 bg-gradient-to-br from-[#aeb99d] to-[#c4c9b5] rounded-lg flex items-center justify-center">
                 <Scale className="text-white" size={20} />
@@ -177,11 +329,11 @@ const HealthQuestionnaire: React.FC<HealthQuestionnaireProps> = ({ onComplete })
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <Scale className="text-[#bcc591]" size={16} />
-                <span className="text-[#2d3319]">{formData.peso} kg</span>
+                <span className="text-[#2d3319]">{dataToUse.peso} kg</span>
               </div>
               <div className="flex items-center gap-2">
                 <Ruler className="text-[#bcc591]" size={16} />
-                <span className="text-[#2d3319]">{formData.altura} cm</span>
+                <span className="text-[#2d3319]">{dataToUse.altura} cm</span>
               </div>
               {bmi && (
                 <div className="mt-4 p-3 bg-[#f5f5f0] rounded-lg">
@@ -192,7 +344,6 @@ const HealthQuestionnaire: React.FC<HealthQuestionnaireProps> = ({ onComplete })
             </div>
           </div>
 
-          {/* Objetivo Principal */}
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 bg-gradient-to-br from-[#c4c9b5] to-[#bcc591] rounded-lg flex items-center justify-center">
@@ -203,16 +354,15 @@ const HealthQuestionnaire: React.FC<HealthQuestionnaireProps> = ({ onComplete })
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <Trophy className="text-[#bcc591]" size={16} />
-                <span className="text-[#2d3319]">{getObjectiveText(formData.objetivo)}</span>
+                <span className="text-[#2d3319]">{getObjectiveText(dataToUse.objetivo)}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Activity className="text-[#bcc591]" size={16} />
-                <span className="text-[#2d3319] capitalize">{formData.experiencia}</span>
+                <span className="text-[#2d3319]">{getExperienciaText(dataToUse.experiencia)}</span>
               </div>
             </div>
           </div>
 
-          {/* Nivel de Actividad */}
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 bg-gradient-to-br from-[#bcc591] to-[#959581] rounded-lg flex items-center justify-center">
@@ -223,36 +373,12 @@ const HealthQuestionnaire: React.FC<HealthQuestionnaireProps> = ({ onComplete })
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <Activity className="text-[#bcc591]" size={16} />
-                <span className="text-[#2d3319]">{getActivityLevelText(formData.nivelActividad)}</span>
+                <span className="text-[#2d3319]">{getActivityLevelText(dataToUse.nivelActividad)}</span>
               </div>
             </div>
           </div>
 
-          {/* Preferencias de Entrenamiento */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-[#959581] to-[#aeb99d] rounded-lg flex items-center justify-center">
-                <Clock className="text-white" size={20} />
-              </div>
-              <h3 className="text-xl font-semibold text-[#2d3319]">Entrenamiento</h3>
-            </div>
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <Clock className="text-[#bcc591]" size={16} />
-                <span className="text-[#2d3319]">{formData.disponibilidadTiempo}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <MapPin className="text-[#bcc591]" size={16} />
-                <span className="text-[#2d3319] capitalize">{formData.lugarEntrenamiento}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Información de Salud */}
-          {(formData.enfermedades.length > 0 ||
-            formData.limitaciones ||
-            formData.medicamentos ||
-            formData.lesiones) && (
+          {dataToUse.limitaciones && (
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 bg-gradient-to-br from-[#aeb99d] to-[#c4c9b5] rounded-lg flex items-center justify-center">
@@ -261,30 +387,10 @@ const HealthQuestionnaire: React.FC<HealthQuestionnaireProps> = ({ onComplete })
                 <h3 className="text-xl font-semibold text-[#2d3319]">Salud</h3>
               </div>
               <div className="space-y-2 text-sm">
-                {formData.enfermedades.length > 0 && (
-                  <div>
-                    <span className="font-medium text-[#2d3319]">Condiciones: </span>
-                    <span className="text-[#bcc591]">{formData.enfermedades.join(", ")}</span>
-                  </div>
-                )}
-                {formData.limitaciones && (
-                  <div>
-                    <span className="font-medium text-[#2d3319]">Limitaciones: </span>
-                    <span className="text-[#bcc591]">{formData.limitaciones}</span>
-                  </div>
-                )}
-                {formData.medicamentos && (
-                  <div>
-                    <span className="font-medium text-[#2d3319]">Medicamentos: </span>
-                    <span className="text-[#bcc591]">{formData.medicamentos}</span>
-                  </div>
-                )}
-                {formData.lesiones && (
-                  <div>
-                    <span className="font-medium text-[#2d3319]">Lesiones: </span>
-                    <span className="text-[#bcc591]">{formData.lesiones}</span>
-                  </div>
-                )}
+                <div>
+                  <span className="font-medium text-[#2d3319]">Limitaciones: </span>
+                  <span className="text-[#bcc591]">{dataToUse.limitaciones}</span>
+                </div>
               </div>
             </div>
           )}
@@ -292,12 +398,11 @@ const HealthQuestionnaire: React.FC<HealthQuestionnaireProps> = ({ onComplete })
 
         <div className="text-center">
           <button
-            onClick={() => {
-              setShowProfile(false)
-              setCurrentStep(0)
-            }}
+            onClick={loadExistingDataIntoForm}
             className="flex items-center gap-2 mx-auto px-6 py-3 bg-gradient-to-r from-[#959581] to-[#aeb99d] text-white rounded-xl font-semibold hover:shadow-lg hover:scale-105 transition-all"
           >
+
+
             <Edit size={20} />
             Editar Información
           </button>
@@ -313,9 +418,9 @@ const HealthQuestionnaire: React.FC<HealthQuestionnaireProps> = ({ onComplete })
       case 2:
         return formData.nivelActividad && formData.objetivo && formData.experiencia
       case 3:
-        return true // opcional
+        return true 
       case 4:
-        return formData.disponibilidadTiempo && formData.lugarEntrenamiento
+        return true
       default:
         return true
     }
@@ -501,6 +606,8 @@ const HealthQuestionnaire: React.FC<HealthQuestionnaireProps> = ({ onComplete })
                         checked={formData.experiencia === option.value}
                         onChange={(e) => handleInputChange("experiencia", e.target.value)}
                         className="sr-only"
+
+
                       />
                       <div
                         className={`p-4 border-2 rounded-xl text-center transition-all ${
@@ -515,6 +622,8 @@ const HealthQuestionnaire: React.FC<HealthQuestionnaireProps> = ({ onComplete })
                     </label>
                   ))}
                 </div>
+
+
               </div>
             </div>
           </div>
@@ -531,36 +640,11 @@ const HealthQuestionnaire: React.FC<HealthQuestionnaireProps> = ({ onComplete })
             </div>
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-semibold text-[#2d3319] mb-3">
-                  ¿Tienes alguna de estas condiciones? (Opcional)
-                </label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {[
-                    "Hipertensión",
-                    "Diabetes",
-                    "Problemas cardíacos",
-                    "Problemas respiratorios",
-                    "Problemas de espalda",
-                    "Artritis o problemas articulares",
-                    "Osteoporosis",
-                    "Ninguna de las anteriores",
-                  ].map((enfermedad) => (
-                    <label key={enfermedad} className="flex items-center gap-3 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={formData.enfermedades.includes(enfermedad)}
-                        onChange={(e) => handleEnfermedadChange(enfermedad, e.target.checked)}
-                        className="w-5 h-5 text-[#959581] border-gray-200 rounded focus:ring-[#959581]"
-                      />
-                      <span className="text-[#2d3319]">{enfermedad}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-              <div>
                 <label className="block text-sm font-semibold text-[#2d3319] mb-2">
-                  Limitaciones físicas o lesiones
+                  Limitaciones físicas o lesiones (opcional)
                 </label>
+
+
                 <textarea
                   className="w-full p-4 border border-gray-200 rounded-xl focus:outline-none focus:border-[#959581] focus:ring-2 focus:ring-[#959581]/20 bg-white"
                   rows={3}
@@ -569,25 +653,14 @@ const HealthQuestionnaire: React.FC<HealthQuestionnaireProps> = ({ onComplete })
                   onChange={(e) => handleInputChange("limitaciones", e.target.value)}
                 />
               </div>
-              <div>
-                <label className="block text-sm font-semibold text-[#2d3319] mb-2">Medicamentos</label>
-                <input
-                  type="text"
-                  className="w-full p-4 border border-gray-200 rounded-xl focus:outline-none focus:border-[#959581] focus:ring-2 focus:ring-[#959581]/20 bg-white"
-                  placeholder="Lista los medicamentos o escribe 'Ninguno' (opcional)"
-                  value={formData.medicamentos}
-                  onChange={(e) => handleInputChange("medicamentos", e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-[#2d3319] mb-2">Lesiones deportivas previas</label>
-                <textarea
-                  className="w-full p-4 border border-gray-200 rounded-xl focus:outline-none focus:border-[#959581] focus:ring-2 focus:ring-[#959581]/20 bg-white"
-                  rows={3}
-                  placeholder="Describe lesiones previas que puedan afectar tu entrenamiento (opcional)"
-                  value={formData.lesiones}
-                  onChange={(e) => handleInputChange("lesiones", e.target.value)}
-                />
+              <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-center">
+
+
+                <CheckCircle className="text-green-600 mx-auto mb-3" size={32} />
+                <h3 className="font-semibold text-green-800 mb-2">¡Listo!</h3>
+                <p className="text-green-700 text-sm">
+                  Con estos datos, podremos guardarlos de forma segura para tu perfil.
+                </p>
               </div>
             </div>
           </div>
@@ -599,76 +672,17 @@ const HealthQuestionnaire: React.FC<HealthQuestionnaireProps> = ({ onComplete })
               <div className="w-16 h-16 bg-gradient-to-br from-[#bcc591] to-[#959581] rounded-full flex items-center justify-center mx-auto mb-4">
                 <Target className="text-white" size={24} />
               </div>
-              <h2 className="text-2xl font-bold text-[#2d3319] mb-2">Preferencias de Entrenamiento</h2>
-              <p className="text-[#bcc591]">Últimos detalles para registrar tus datos</p>
+              <h2 className="text-2xl font-bold text-[#2d3319] mb-2">Confirmación</h2>
+              <p className="text-[#bcc591]">Revisa y guarda tu información</p>
             </div>
+
+
             <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-semibold text-[#2d3319] mb-3">Tiempo disponible *</label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {[
-                    { value: "15-30min", label: "15-30 minutos" },
-                    { value: "30-45min", label: "30-45 minutos" },
-                    { value: "45-60min", label: "45-60 minutos" },
-                    { value: "60+min", label: "Más de 60 minutos" },
-                  ].map((option) => (
-                    <label key={option.value} className="cursor-pointer">
-                      <input
-                        type="radio"
-                        name="disponibilidadTiempo"
-                        value={option.value}
-                        checked={formData.disponibilidadTiempo === option.value}
-                        onChange={(e) => handleInputChange("disponibilidadTiempo", e.target.value)}
-                        className="sr-only"
-                      />
-                      <div
-                        className={`p-4 border-2 rounded-xl transition-all ${
-                          formData.disponibilidadTiempo === option.value
-                            ? "border-[#959581] bg-[#959581]/5"
-                            : "border-gray-200 hover:border-[#aeb99d]"
-                        }`}
-                      >
-                        <div className="font-semibold text-[#2d3319]">{option.label}</div>
-                      </div>
-                    </label>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-[#2d3319] mb-3">Lugar preferido *</label>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  {[
-                    { value: "casa", label: "En casa" },
-                    { value: "gimnasio", label: "Gimnasio" },
-                    { value: "mixto", label: "Ambos" },
-                  ].map((option) => (
-                    <label key={option.value} className="cursor-pointer">
-                      <input
-                        type="radio"
-                        name="lugarEntrenamiento"
-                        value={option.value}
-                        checked={formData.lugarEntrenamiento === option.value}
-                        onChange={(e) => handleInputChange("lugarEntrenamiento", e.target.value)}
-                        className="sr-only"
-                      />
-                      <div
-                        className={`p-4 border-2 rounded-xl text-center transition-all ${
-                          formData.lugarEntrenamiento === option.value
-                            ? "border-[#959581] bg-[#959581]/5"
-                            : "border-gray-200 hover:border-[#aeb99d]"
-                        }`}
-                      >
-                        <div className="font-semibold text-[#2d3319]">{option.label}</div>
-                      </div>
-                    </label>
-                  ))}
-                </div>
-              </div>
-              <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-center">
-                <CheckCircle className="text-green-600 mx-auto mb-3" size={32} />
-                <h3 className="font-semibold text-green-800 mb-2">¡Listo!</h3>
-                <p className="text-green-700 text-sm">
-                  Con estos datos, podremos guardarlos de forma segura para tu perfil.
+              <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 text-center">
+                <CheckCircle className="text-blue-600 mx-auto mb-3" size={32} />
+                <h3 className="font-semibold text-blue-800 mb-2">¡Todo listo!</h3>
+                <p className="text-blue-700 text-sm">
+                  Revisa que toda tu información sea correcta antes de guardar.
                 </p>
               </div>
             </div>
@@ -698,6 +712,12 @@ const HealthQuestionnaire: React.FC<HealthQuestionnaireProps> = ({ onComplete })
       <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
         {renderStep()}
 
+        {error && (
+          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-center">
+            {error}
+          </div>
+        )}
+
         {currentStep > 0 && (
           <div className="flex justify-between mt-8 pt-6 border-t border-gray-100">
             <button
@@ -713,15 +733,25 @@ const HealthQuestionnaire: React.FC<HealthQuestionnaireProps> = ({ onComplete })
             {currentStep === totalSteps ? (
               <button
                 onClick={handleSubmit}
-                disabled={!isStepValid()}
+                disabled={!isStepValid() || loading}
                 className={`flex items-center gap-2 px-8 py-3 rounded-xl font-semibold transition-all ${
-                  isStepValid()
+                  isStepValid() && !loading
                     ? "bg-gradient-to-r from-[#959581] to-[#aeb99d] text-white hover:shadow-lg hover:scale-105"
                     : "bg-gray-200 text-gray-400 cursor-not-allowed"
                 }`}
+
               >
-                <CheckCircle size={20} />
-                Guardar Datos
+                {loading ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Guardando...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle size={20} />
+                    Guardar Datos
+                  </>
+                )}
               </button>
             ) : (
               <button
@@ -729,6 +759,8 @@ const HealthQuestionnaire: React.FC<HealthQuestionnaireProps> = ({ onComplete })
                 disabled={!isStepValid()}
                 className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${
                   isStepValid()
+
+
                     ? "bg-gradient-to-r from-[#959581] to-[#aeb99d] text-white hover:shadow-lg hover:scale-105"
                     : "bg-gray-200 text-gray-400 cursor-not-allowed"
                 }`}
