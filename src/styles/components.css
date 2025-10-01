@@ -46,7 +46,6 @@
   font-weight: 600;
 }
 
-/* Plan Cards Mejoradas */
 .plan-card-improved {
   border: 2px solid #e5e7eb;
   border-radius: 0.75rem;
@@ -65,12 +64,10 @@
   background-color: rgba(174, 185, 157, 0.05);
 }
 
-/* Iconos consistentes */
 .icon-consistent-sm { width: 1rem; height: 1rem; }
 .icon-consistent-md { width: 1.25rem; height: 1.25rem; }
 .icon-consistent-lg { width: 1.5rem; height: 1.5rem; }
 
-/* Estados de nivel de dificultad */
 .nivel-badge-improved {
   display: inline-block;
   padding: 0.25rem 0.75rem;
@@ -94,7 +91,6 @@
   color: #dc2626;
 }
 
-/* Loading states mejorados */
 .loading-improved {
   display: flex;
   flex-direction: column;
