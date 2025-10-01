@@ -1,27 +1,22 @@
-/* General spacing and layout */
 .space-y-8 > * + * {
   margin-top: 2rem;
 }
-
 .flex {
   display: flex;
 }
-
 .flex-col {
   flex-direction: column;
 }
-
 .sm\:flex-row {
   flex-direction: row;
 }
-
 .justify-between {
   justify-content: space-between;
 }
-
 .items-start {
   align-items: flex-start;
 }
+
 
 .sm\:items-center {
   align-items: center;
@@ -30,8 +25,6 @@
 .gap-4 {
   gap: 1rem;
 }
-
-/* Typography */
 .text-3xl {
   font-size: 1.875rem;
 }
@@ -68,20 +61,19 @@
   font-weight: 500;
 }
 
-/* Input Field Styles for Step 1 (Información Básica) and Shared with Step 3 */
 input[type="number"],
 input[type="text"],
 select,
 textarea {
   width: 100%;
-  padding: 0.875rem 1.25rem; /* Slightly smaller padding for a sleeker look */
-  border: 1px solid #e5e5e5; /* Softer gray border */
-  border-radius: 0.75rem; /* Consistent rounded corners */
-  background-color: #fafafa; /* Light background for inputs */
-  font-size: 0.875rem; /* Smaller, cleaner font size */
-  color: #2d3319; /* Text color matching the theme */
-  transition: all 0.2s ease-in-out; /* Smooth transitions for hover/focus */
-  appearance: none; /* Remove default browser styling */
+  padding: 0.875rem 1.25rem; 
+  border: 1px solid #e5e5e5; 
+  border-radius: 0.75rem;
+  background-color: #fafafa;  
+  font-size: 0.875rem; 
+  color: #2d3319; 
+  transition: all 0.2s ease-in-out; 
+  appearance: none; 
   -webkit-appearance: none;
   -moz-appearance: none;
 }
@@ -91,37 +83,35 @@ input[type="text"]:focus,
 select:focus,
 textarea:focus {
   outline: none;
-  border-color: #959581; /* Theme color for focus */
-  box-shadow: 0 0 0 3px rgba(149, 149, 129, 0.2); /* Subtle ring effect */
-  background-color: #fff; /* White background on focus */
+  border-color: #959581; 
+  box-shadow: 0 0 0 3px rgba(149, 149, 129, 0.2); 
+  background-color: #fff; 
 }
 
 select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%232d3319'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E"); /* Custom dropdown arrow */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%232d3319'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E"); 
   background-repeat: no-repeat;
   background-position: right 1rem center;
   background-size: 1.25rem;
 }
 
 textarea {
-  resize: vertical; /* Allow vertical resizing only */
-  min-height: 4rem; /* Minimum height for textareas */
+  resize: vertical; 
+  min-height: 4rem; 
 }
 
-/* Placeholder Styling */
 input[type="number"]::placeholder,
 input[type="text"]::placeholder,
 textarea::placeholder {
-  color: #bcc591; /* Placeholder matches theme */
+  color: #bcc591; 
   opacity: 0.7;
 }
 
-/* Checkbox Styles for Step 3 (Información de Salud) */
 input[type="checkbox"] {
   width: 1.25rem;
   height: 1.25rem;
-  border: 2px solid #e5e5e5; /* Thicker border for visibility */
-  border-radius: 0.25rem; /* Slightly rounded checkboxes */
+  border: 2px solid #e5e5e5; 
+  border-radius: 0.25rem; 
   background-color: #fafafa;
   transition: all 0.2s ease-in-out;
   appearance: none;
@@ -130,9 +120,9 @@ input[type="checkbox"] {
 }
 
 input[type="checkbox"]:checked {
-  background-color: #959581; /* Theme color when checked */
+  background-color: #959581; 
   border-color: #959581;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='white'%3E%3Cpath fill-rule='evenodd' d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z' clip-rule='evenodd' /%3E%3C/svg%3E"); /* Custom checkmark */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='white'%3E%3Cpath fill-rule='evenodd' d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z' clip-rule='evenodd' /%3E%3C/svg%3E"); 
   background-size: 1rem;
   background-position: center;
   background-repeat: no-repeat;
@@ -140,10 +130,10 @@ input[type="checkbox"]:checked {
 
 input[type="checkbox"]:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(149, 149, 129, 0.2); /* Focus ring */
+  box-shadow: 0 0 0 3px rgba(149, 149, 129, 0.2); 
 }
 
-/* Label Styling (Shared for all labels, including checkboxes) */
+
 label {
   display: block;
   font-size: 0.875rem;
@@ -152,11 +142,10 @@ label {
   margin-bottom: 0.5rem;
 }
 
-/* Checkbox Label (Flex for alignment) */
 label.flex.items-center {
   display: flex;
   align-items: center;
-  gap: 0.75rem; /* Space between checkbox and text */
+  gap: 0.75rem; 
   cursor: pointer;
 }
 
@@ -165,7 +154,6 @@ label.flex.items-center span {
   color: #2d3319;
 }
 
-/* Grid Layout for Inputs and Checkboxes */
 .grid {
   display: grid;
 }
@@ -186,7 +174,6 @@ label.flex.items-center span {
   gap: 0.75rem;
 }
 
-/* Button Styles */
 .px-6 {
   padding-left: 1.5rem;
   padding-right: 1.5rem;
@@ -215,7 +202,6 @@ label.flex.items-center span {
   transform: scale(1.05);
 }
 
-/* Progress Bar and Card */
 .bg-gradient-to-r {
   background-image: linear-gradient(to right, var(--tw-gradient-stops));
 }
@@ -254,7 +240,6 @@ label.flex.items-center span {
   border-radius: 1rem;
 }
 
-/* Additional Utility Classes */
 .mb-6 {
   margin-bottom: 1.5rem;
 }
@@ -331,7 +316,6 @@ label.flex.items-center span {
   transition-duration: 200ms;
 }
 
-/* Warning Box (Already styled, but ensuring consistency) */
 .bg-amber-50 {
   background-color: #fffbeb;
 }

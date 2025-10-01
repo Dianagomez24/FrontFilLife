@@ -1,6 +1,4 @@
-/* styles/app.css */
 
-/* Estilos base para el layout */
 .layout {
   display: flex;
   min-height: 100vh;
@@ -40,7 +38,6 @@
   }
 }
 
-/* Estilos para el overlay (opcional para colapsar en pantallas pequeñas) */
 .overlay {
   position: fixed;
   inset: 0;
@@ -53,7 +50,6 @@
   display: block;
 }
 
-/* Estilos para el header */
 .header {
   background-color: #ffffff;
   padding: 1rem 1.5rem;
@@ -96,7 +92,6 @@
   }
 }
 
-/* Estilos para la navegación */
 .nav {
   padding: 0 1rem;
 }
@@ -166,7 +161,6 @@
   color: #2d3319;
 }
 
-/* Estilos para el contenido */
 .content {
   padding: 1.5rem;
   background-color: #ffffff;

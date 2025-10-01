@@ -1,15 +1,14 @@
-/* Contenedor principal */
 .plan-container {
   width: 100%;
-  max-width: 80rem; /* Ancho amplio para escritorio */
+  max-width: 80rem; 
   margin-left: auto;
   margin-right: auto;
-  padding: 0 2rem; /* Padding simétrico */
+  padding: 0 2rem; 
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 100vh; /* Centra verticalmente */
+  min-height: 100vh; 
   justify-content: center;
 }
 
@@ -23,7 +22,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 1.5rem; /* Centrado y espaciado */
+  margin: 0 auto 1.5rem; 
 }
 
 .plan-header h1 {
@@ -59,7 +58,6 @@
   transform: scale(1.05);
 }
 
-/* Lista de planes */
 .bg-white {
   background-color: #fff;
 }
@@ -126,7 +124,6 @@
   justify-content: center;
 }
 
-/* Tarjeta de plan */
 .border-2 {
   border-width: 2px;
 }
@@ -245,7 +242,6 @@
   border-top-width: 1px;
 }
 
-/* Formulario de plan */
 .max-w-4xl {
   max-width: 64rem;
 }
@@ -325,7 +321,6 @@
   cursor: not-allowed;
 }
 
-/* Formulario de comida */
 .p-3 {
   padding: 0.75rem;
 }
@@ -342,7 +337,6 @@
   margin-top: 1rem;
 }
 
-/* Estilos para cards */
 .plan-card {
   border: 1px solid rgba(196, 201, 181, 0.2);
   border-radius: 0.75rem;
