@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react"
-import { exercisePlansService } from "../service/exercisePlans"
-import type { ExercisePlan, CreateExercisePlanDto, UpdateExercisePlanDto } from "../types/exercise-plan"
+import { nutritionPlansService } from "../service/nutritionPlans"
+import type { NutritionPlan, CreateNutritionPlanDto, UpdateNutritionPlanDto } from "../types/nutrition"
 
-export function useExercisePlans() {
-  const [activePlans, setActivePlans] = useState<ExercisePlan[]>([])
+export function useNutritionPlans() {
+  const [activePlans, setActivePlans] = useState<NutritionPlan[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -15,40 +15,38 @@ export function useExercisePlans() {
     try {
       setLoading(true)
       setError(null)
-      const response = await exercisePlansService.getAll()
+      const response = await nutritionPlansService.getAll()
       setActivePlans(response.planes || [])
     } catch (err: any) {
       setError(err.response?.data?.message || "Error al cargar los planes")
-      console.error("Error loading plans:", err)
+      console.error("Error loading nutrition plans:", err)
     } finally {
       setLoading(false)
     }
   }
 
-  const createPlan = async (planData: CreateExercisePlanDto) => {
+  const createPlan = async (planData: CreateNutritionPlanDto) => {
     try {
       setError(null)
-      const response = await exercisePlansService.create(planData)
-      await loadPlans() 
+      const response = await nutritionPlansService.create(planData)
+      await loadPlans()
       return response.plan
     } catch (err: any) {
       setError(err.response?.data?.message || "Error al crear el plan")
-      console.error("Error creating plan:", err)
+      console.error("Error creating nutrition plan:", err)
       throw err
     }
   }
 
-  const updatePlan = async (planId: number, planData: UpdateExercisePlanDto) => {
+  const updatePlan = async (planId: number, planData: UpdateNutritionPlanDto) => {
     try {
       setError(null)
-      const response = await exercisePlansService.update(planId, planData)
+      const response = await nutritionPlansService.update(planId, planData)
       await loadPlans() 
-      
-
       return response
     } catch (err: any) {
       setError(err.response?.data?.message || "Error al actualizar el plan")
-      console.error("Error updating plan:", err)
+      console.error("Error updating nutrition plan:", err)
       throw err
     }
   }
@@ -56,11 +54,11 @@ export function useExercisePlans() {
   const togglePlanStatus = async (planId: number, currentStatus: boolean) => {
     try {
       setError(null)
-      await exercisePlansService.update(planId, { activo: !currentStatus })
+      await nutritionPlansService.update(planId, { activo: !currentStatus })
       await loadPlans() 
     } catch (err: any) {
       setError(err.response?.data?.message || "Error al actualizar el plan")
-      console.error("Error updating plan:", err)
+      console.error("Error updating nutrition plan:", err)
       throw err
     }
   }
@@ -68,14 +66,11 @@ export function useExercisePlans() {
   const deletePlan = async (planId: number) => {
     try {
       setError(null)
-      await exercisePlansService.delete(planId)
-      await loadPlans() 
-
-      
+      await nutritionPlansService.delete(planId)
+      await loadPlans()
     } catch (err: any) {
-
       setError(err.response?.data?.message || "Error al eliminar el plan")
-      console.error("Error deleting plan:", err)
+      console.error("Error deleting nutrition plan:", err)
       throw err
     }
   }
@@ -85,8 +80,7 @@ export function useExercisePlans() {
     loading,
     error,
     createPlan,
-    updatePlan, 
-    
+    updatePlan,
     togglePlanStatus,
     deletePlan,
     refetch: loadPlans
