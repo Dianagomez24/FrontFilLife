@@ -1,24 +1,20 @@
-"use client";
 
 import type React from "react";
 import { useState } from "react";
-import {
-  LayoutDashboard,
-  Dumbbell,
-  Apple,
-  User,
-  LogOut,
-} from "lucide-react";
+import { LayoutDashboard, Dumbbell, Apple, User, LogOut, Bell, } from "lucide-react";
 import Dashboard from "../pages/dashboard";
 import ExercisePlan from "../pages/planejercicio";
 import HealthQuestionnaire from "../components/cuestionariosalud";
 import NutritionPlan from "../pages/plannutricional";
+import NotificationsPage from "../pages/notifications"; 
+import { NotificationDropdown } from "./notification-dropdown"; 
 
 interface FitLifeAppProps {
   user: {
     id: number;
     nombre: string;
     apellidos: string;
+
     email: string;
     hasHealthData: boolean;
     hasExercisePlan: boolean;
@@ -27,7 +23,7 @@ interface FitLifeAppProps {
   onLogout: () => void;
 }
 
-type ActivePage = "dashboard" | "ejercicio" | "nutricion" | "datos-fisicos";
+type ActivePage = "dashboard" | "ejercicio" | "nutricion" | "datos-fisicos" | "notificaciones";
 
 const FitLifeApp: React.FC<FitLifeAppProps> = ({ user, onLogout }) => {
   const [activePage, setActivePage] = useState<ActivePage>("dashboard");
@@ -61,28 +57,37 @@ const FitLifeApp: React.FC<FitLifeAppProps> = ({ user, onLogout }) => {
       label: "Plan Ejercicio",
       icon: Dumbbell,
       description: "Rutinas y entrenamientos",
+
     },
     {
       id: "nutricion" as ActivePage,
       label: "Plan Nutrición",
+
       icon: Apple,
       description: "Alimentación saludable",
     },
     {
       id: "datos-fisicos" as ActivePage,
       label: "Datos Físicos",
+
       icon: User,
       description: "Cuestionario de salud",
+    },
+    {
+      id: "notificaciones" as ActivePage,
+      label: "Notificaciones",
+      icon: Bell,
+
+      description: "Tus alertas y recordatorios",
     },
   ];
 
   const handleQuestionnaireComplete = (healthData: any) => {
+    console.log('Datos físicos completados:', healthData);
     setCurrentUser((prev) => ({
       ...prev,
       hasHealthData: true,
-      hasExercisePlan: true,
     }));
-    setActivePage("ejercicio");
   };
 
   const renderContent = () => {
@@ -90,16 +95,17 @@ const FitLifeApp: React.FC<FitLifeAppProps> = ({ user, onLogout }) => {
       case "dashboard":
         return <Dashboard user={currentUser} />;
       case "ejercicio":
-        return <ExercisePlan user={currentUser} onStartQuestionnaire={() => setActivePage("datos-fisicos")} />;
+        return <ExercisePlan user={currentUser} />;
       case "nutricion":
         return <NutritionPlan user={currentUser} />;
       case "datos-fisicos":
         return (
           <HealthQuestionnaire
             onComplete={handleQuestionnaireComplete}
-            onBack={() => setActivePage("ejercicio")}
           />
         );
+      case "notificaciones": 
+        return <NotificationsPage />;
       default:
         return <Dashboard user={currentUser} />;
     }
@@ -109,6 +115,8 @@ const FitLifeApp: React.FC<FitLifeAppProps> = ({ user, onLogout }) => {
     switch (activePage) {
       case "datos-fisicos":
         return "Datos Físicos";
+      case "notificaciones": 
+        return "Notificaciones";
       default:
         return activePage.charAt(0).toUpperCase() + activePage.slice(1);
     }
@@ -118,33 +126,40 @@ const FitLifeApp: React.FC<FitLifeAppProps> = ({ user, onLogout }) => {
     switch (activePage) {
       case "datos-fisicos":
         return "Cuestionario de salud";
+      case "notificaciones": 
+        return "Tus alertas y recordatorios";
       default:
         return navigationItems.find((item) => item.id === activePage)?.description || "";
     }
   };
 
   return (
+
     <div className="layout flex min-h-screen">
-      {/* Sidebar */}
+
+
       <aside className="sidebar fixed flex flex-col justify-between w-64 bg-white">
-        {/* Header del sidebar */}
+
         <div>
           <div className="flex items-center justify-between p-6 border-b border-gray-100">
             <div className="flex items-center gap-3">
+
               <div className="w-12 h-12 bg-gradient-to-br from-[#959581] to-[#aeb99d] rounded-xl flex items-center justify-center">
                 <FitLifeIcon />
               </div>
               <div>
                 <h1 className="text-xl font-bold text-[#2d3319]">FitLife</h1>
+
+
                 <p className="text-[#bcc591] text-sm">Tu transformación</p>
               </div>
             </div>
           </div>
 
-          {/* Navegación */}
           <nav className="nav p-4">
             <div className="space-y-1">
               {navigationItems.map((item) => {
+
                 const Icon = item.icon;
                 const isActive = activePage === item.id;
 
@@ -155,6 +170,7 @@ const FitLifeApp: React.FC<FitLifeAppProps> = ({ user, onLogout }) => {
                     onClick={(e) => {
                       e.preventDefault();
                       setActivePage(item.id);
+
                     }}
                     className={`nav-item ${isActive ? "active" : ""}`}
                   >
@@ -163,6 +179,7 @@ const FitLifeApp: React.FC<FitLifeAppProps> = ({ user, onLogout }) => {
                     </span>
                     <span>
                       <div className="font-semibold">{item.label}</div>
+
                       <div className={`text-sm ${isActive ? "text-white/80" : "text-[#bcc591]"}`}>
                         {item.description}
                       </div>
@@ -174,9 +191,10 @@ const FitLifeApp: React.FC<FitLifeAppProps> = ({ user, onLogout }) => {
           </nav>
         </div>
 
-        {/* Botón de logout */}
+
         <div className="p-4 border-t border-gray-100">
           <button
+
             onClick={onLogout}
             className="w-full flex items-center gap-3 p-4 text-[#2d3319] bg-[#f5f5f0] rounded-2xl shadow-sm hover:bg-gradient-to-r hover:from-[#aeb99d] hover:to-[#c4c9b5] hover:shadow-md hover:scale-102 hover:opacity-90 transition-all duration-200"
           >
@@ -186,7 +204,6 @@ const FitLifeApp: React.FC<FitLifeAppProps> = ({ user, onLogout }) => {
         </div>
       </aside>
 
-      {/* Contenido principal */}
       <main className="main-content ml-64 flex-1">
         <header className="header">
           <div className="flex items-center gap-4">
@@ -196,11 +213,15 @@ const FitLifeApp: React.FC<FitLifeAppProps> = ({ user, onLogout }) => {
             </div>
           </div>
           <div className="flex items-center gap-3">
+
+            <NotificationDropdown />
             <div className="w-10 h-10 bg-gradient-to-br from-[#959581] to-[#aeb99d] rounded-full flex items-center justify-center">
               <User className="text-white" size={18} />
+
             </div>
             <div className="text-right">
               <div className="text-sm font-semibold text-[#2d3319]">
+                
                 {currentUser.nombre} {currentUser.apellidos}
               </div>
               <div className="text-xs text-[#bcc591]">{currentUser.email}</div>

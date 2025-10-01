@@ -2,7 +2,9 @@
 
 import type React from "react"
 import { useState } from "react"
-import { Mail, Lock, ArrowRight } from "lucide-react" // Solo importamos los íconos necesarios para el formulario
+import { Mail, Lock, ArrowRight } from "lucide-react"
+import { login, resendVerification } from "../service/auth"
+import type { LoginDto } from "../types/authTypes"
 
 interface LoginProps {
   onSwitchToRegister: () => void
@@ -12,25 +14,68 @@ interface LoginProps {
 const Login: React.FC<LoginProps> = ({ onSwitchToRegister, onLoginSuccess }) => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState("")
+  const [needsVerification, setNeedsVerification] = useState(false)
+  const [isResending, setIsResending] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setIsLoading(true)
+    setError("")
+    setNeedsVerification(false)
 
-    const userData = {
-      id: Date.now(),
-      nombre: "Usuario",
-      apellidos: "Demo",
-      email: email,
-      hasHealthData: false,
-      hasExercisePlan: false,
-      hasNutritionPlan: false,
+    try {
+      const loginData: LoginDto = { email, password }
+      const response = await login(loginData)
+
+      if (response.access_token) {
+        localStorage.setItem("token", response.access_token)
+      }
+
+      onLoginSuccess?.(response.user)
+    } catch (err: any) {
+      console.log("[v0] Login error details:", err.response?.data)
+
+      if (err.response?.status === 401) {
+        const errorMessage = err.response?.data?.message || ""
+        if (errorMessage.includes("verificar") || errorMessage.includes("verify")) {
+          setError("Debes verificar tu email antes de iniciar sesión")
+          setNeedsVerification(true)
+        } else {
+          setError("Email o contraseña incorrectos")
+        }
+      } else if (err.response?.status === 403) {
+        setError("Debes verificar tu email antes de iniciar sesión")
+        setNeedsVerification(true)
+      } else {
+        setError("Error al iniciar sesión. Intenta de nuevo.")
+      }
+      console.error("Login error:", err)
+    } finally {
+      setIsLoading(false)
     }
-
-    console.log("Login:", userData)
-    onLoginSuccess?.(userData)
   }
 
-  // Definimos los SVGs como componentes
+  const handleResendVerification = async () => {
+    if (!email) {
+      setError("Por favor ingresa tu email primero")
+      return
+    }
+
+    setIsResending(true)
+    try {
+      await resendVerification({ email })
+      setError("")
+      alert("Email de verificación reenviado. Revisa tu bandeja de entrada.")
+    } catch (err: any) {
+      console.error("Resend verification error:", err)
+      setError("Error al reenviar el email de verificación")
+    } finally {
+      setIsResending(false)
+    }
+  }
+
   const FitLifeIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
       <path
@@ -122,6 +167,41 @@ const Login: React.FC<LoginProps> = ({ onSwitchToRegister, onLoginSuccess }) => 
         <h2 className="auth-title">Iniciar Sesión</h2>
         <p className="auth-subtitle">Accede a tu cuenta</p>
         <form className="form" onSubmit={handleSubmit}>
+          {error && (
+            <div
+              style={{
+                color: "#ef4444",
+                backgroundColor: "#fef2f2",
+                padding: "12px",
+                borderRadius: "8px",
+                marginBottom: "16px",
+                fontSize: "14px",
+                border: "1px solid #fecaca",
+              }}
+            >
+              {error}
+              {needsVerification && (
+                <div style={{ marginTop: "8px" }}>
+                  <button
+                    type="button"
+                    onClick={handleResendVerification}
+                    disabled={isResending}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "#3b82f6",
+                      textDecoration: "underline",
+                      cursor: "pointer",
+                      fontSize: "14px",
+                      padding: "0",
+                    }}
+                  >
+                    {isResending ? "Reenviando..." : "Reenviar email de verificación"}
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
           <div className="form-group">
             <label className="form-label">
               <Mail size={16} />
@@ -134,6 +214,7 @@ const Login: React.FC<LoginProps> = ({ onSwitchToRegister, onLoginSuccess }) => 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              disabled={isLoading}
             />
           </div>
           <div className="form-group">
@@ -148,10 +229,11 @@ const Login: React.FC<LoginProps> = ({ onSwitchToRegister, onLoginSuccess }) => 
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              disabled={isLoading}
             />
           </div>
-          <button type="submit" className="submit-btn">
-            Iniciar Sesión <ArrowRight size={18} />
+          <button type="submit" className="submit-btn" disabled={isLoading}>
+            {isLoading ? "Iniciando sesión..." : "Iniciar Sesión"} <ArrowRight size={18} />
           </button>
         </form>
         <div className="forgot-password">
