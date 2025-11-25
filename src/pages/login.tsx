@@ -322,11 +322,7 @@ const Login: React.FC<LoginProps> = ({ onSwitchToRegister, onLoginSuccess }) => 
             <ArrowRight size={18} />
           </button>
         </form>
-        <div className="forgot-password">
-          <a href="#" className="forgot-link">
-            ¿Olvidaste tu contraseña?
-          </a>
-        </div>
+        
         <div className="auth-footer">
           ¿No tienes cuenta?{" "}
           <span className="auth-link" onClick={onSwitchToRegister}>

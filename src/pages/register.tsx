@@ -243,7 +243,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onRegisterSuccess 
                 onChange={handleChange}
                 required
                 disabled={isLoading || success}
-                maxLength={50}
+                maxLength={20}
               />
             </div>
             <div className="form-group">
@@ -257,7 +257,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onRegisterSuccess 
                 onChange={handleChange}
                 required
                 disabled={isLoading || success}
-                maxLength={50}
+                maxLength={30}
               />
             </div>
           </div>
@@ -293,6 +293,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onRegisterSuccess 
                 required
                 disabled={isLoading || success}
                 style={{ paddingRight: '40px' }}
+                maxLength={30}
               />
               <button
                 type="button"
@@ -354,6 +355,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onRegisterSuccess 
                 required
                 disabled={isLoading || success}
                 style={{ paddingRight: '40px' }}
+                maxLength={30}
               />
               <button
                 type="button"
